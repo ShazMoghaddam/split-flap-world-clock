@@ -6,6 +6,14 @@
 - Site: the four top buttons are matching pills, with Open the clock no longer picked out in red.
 - Site: a terracotta and slate navy footer, and the headline accent now matches it.
 - The social preview image says "Any browser" instead of "Android".
+- Clock: a bigger, chunkier board. Tiles grow with the screen (taller, like real flaps) and still shrink to fit ten cities.
+- Clock: characters glow softly, like a backlit board, with a switch to turn it off.
+- Clock: each row shows a sun or moon for day or night, and its time difference from home (+5H, −8H, +5:30).
+- Clock: dates read "SUN 01 NOV" instead of "SUN 11/01", so they're the same in every country.
+- Clock: colour pickers replace the accent themes: one for the characters and one for the accent, each with presets and any custom colour. Earlier theme choices carry over.
+- Clock: sound previews in Preferences play even when the clock is muted.
+- Clock: Preferences is redesigned with brighter text, a single Done button and clearer controls. Tap a city in the list to add it, and tap it again to take it off the board.
+- Clock: brighter row handles and remove buttons, and the seconds now turn over exactly on the second.
 
 ## 1.0.0 (2026-10-31)
 

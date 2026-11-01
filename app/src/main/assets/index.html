@@ -66,14 +66,19 @@
   --tile-bot:    #161718;
   --seam:        #050505;
   --rule:        #1a1a1c;
-  --text:        #d1cfc8;
-  --text-dim:    #4a4a48;
-  --text-mid:    #7a7870;
+  --rule-strong: #34353a;
+  --text:        #e2dfd6;
+  --text-dim:    #8a877f;   /* was #4a4a48: labels were hard to read */
+  --text-mid:    #b4b1a8;
+  --flap-ink:    #ece6d6;   /* characters on the flaps (user can change) */
+  --flap-glow:   rgba(255, 176, 80, 0.42);   /* backlit glow behind them */
   --accent:      #b8a068;
   --accent-dim:  #6a5c38;
   --danger:      #8b3a3a;
   --danger-hover:#c04040;
   --overlay-bg:  rgba(4,4,4,0.92);
+
+  --row-cols: 18px 16fr 5fr 2fr 10fr calc(var(--tile-h, 48px) * 2.4) 28px;
 
   --font-display: 'Bebas Neue', sans-serif;
   --font-mono:    'IBM Plex Mono', monospace;
@@ -272,7 +277,7 @@ body.show-cursor { cursor: default; }
 }
 .local-city {
   font-family: var(--font-display);
-  font-size: clamp(30px, min(8vw, 13vh), 120px);
+  font-size: clamp(30px, min(8vw, 13vh), 180px);
   color: var(--text);
   line-height: 0.85;
   letter-spacing: 0.05em;
@@ -286,9 +291,9 @@ body.show-cursor { cursor: default; }
   transition: var(--theme-transition);
 }
 .local-date {
-  font-size: clamp(9px, 0.9vw, 13px);
+  font-size: clamp(10px, 1vw, 18px);
   letter-spacing: 0.25em;
-  color: var(--text);
+  color: var(--text-mid);
   text-transform: uppercase;
   margin-top: 10px;
 }
@@ -299,15 +304,15 @@ body.show-cursor { cursor: default; }
 .rows {
   display: flex;
   flex-direction: column;
-  gap: clamp(6px, 1vh, 14px);
+  gap: calc(var(--tile-h, 48px) * 0.24);
 }
 .row {
   display: grid;
-  grid-template-columns: 18px 2.5fr 1fr 0.6fr 1.5fr auto;
+  grid-template-columns: var(--row-cols);
   align-items: center;
   gap: clamp(10px, 1.5vw, 24px);
 }
-.flap-cell { display: flex; gap: 2px; }
+.flap-cell { display: flex; gap: max(2px, calc(var(--tile-h, 48px) * 0.05)); }
 
 .tile {
   height: var(--tile-h, clamp(36px, 4.2vh, 56px));
@@ -319,6 +324,7 @@ body.show-cursor { cursor: default; }
   justify-content: center;
   overflow: hidden;
   border: 1px solid rgba(0,0,0,0.3);
+  border-radius: max(2px, calc(var(--tile-h, 48px) * 0.06));
 }
 .tile::after {
   content: '';
@@ -334,21 +340,44 @@ body.show-cursor { cursor: default; }
 .tile-char {
   position: relative;
   z-index: 3;
-  color: var(--text);
-  font-size: min(clamp(13px, 1.5vw, 22px), calc(var(--tile-h, 56px) * 0.52));
+  color: var(--flap-ink);
+  font-size: calc(var(--tile-h, 48px) * 0.56);
   font-weight: 500;
+  line-height: 1;
   text-transform: uppercase;
+  /* Backlit glow, like a lit departure board */
+  text-shadow: 0 0 calc(var(--tile-h, 48px) * 0.22) var(--flap-glow);
 }
-.cell-day .tile-char  { color: var(--text); font-size: min(clamp(10px, 1.1vw, 15px), calc(var(--tile-h, 56px) * 0.42)); }
-.cell-sec .tile-char  { color: var(--text); font-size: min(clamp(11px, 1.2vw, 17px), calc(var(--tile-h, 56px) * 0.46)); }
+body.no-glow .tile-char { text-shadow: none; }
+.cell-day .tile-char  { font-size: calc(var(--tile-h, 48px) * 0.46); }
+.cell-sec .tile-char  { font-size: calc(var(--tile-h, 48px) * 0.46); }
+
+/* Day/night icon and time difference from home */
+.row-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: calc(var(--tile-h, 48px) * 0.16);
+  color: var(--text-mid);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: calc(var(--tile-h, 48px) * 0.36);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.row-info__icon { display: flex; width: calc(var(--tile-h, 48px) * 0.46); height: calc(var(--tile-h, 48px) * 0.46); color: #8f9bb8; }
+.row-info.is-day .row-info__icon { color: #f2b45a; filter: drop-shadow(0 0 calc(var(--tile-h, 48px) * 0.1) rgba(242, 180, 90, .45)); }
+.row-info__icon svg { width: 100%; height: 100%; }
+.home-row .row-info__offset { color: var(--text-dim); }
 
 /* Row delete button */
 .row-delete {
-  width: 28px; height: min(28px, var(--tile-h, 28px));
+  width: min(28px, var(--tile-h, 28px)); height: min(28px, var(--tile-h, 28px));
   background: none;
-  border: 1px solid transparent;
-  color: var(--text-dim);
-  font-size: 14px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 50%;
+  color: var(--text-mid);
+  font-size: 13px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   opacity: 0;
@@ -356,7 +385,7 @@ body.show-cursor { cursor: default; }
   flex-shrink: 0;
 }
 .row:hover .row-delete,
-body.show-cursor .row-delete { opacity: 0.5; }
+body.show-cursor .row-delete { opacity: 0.9; }
 .row-delete:hover { opacity: 1 !important; color: var(--danger-hover); border-color: var(--danger); cursor: pointer; }
 
 /* ── DRAG HANDLE ── */
@@ -365,8 +394,10 @@ body.show-cursor .row-delete { opacity: 0.5; }
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-dim);
-  font-size: 14px;
+  color: var(--text-mid);
+  font-size: min(20px, calc(var(--tile-h, 48px) * 0.9));
+  line-height: 1;
+  height: var(--tile-h, 48px);
   opacity: 0;
   cursor: grab;
   flex-shrink: 0;
@@ -376,8 +407,8 @@ body.show-cursor .row-delete { opacity: 0.5; }
   letter-spacing: -1px;
 }
 .row:hover .row-drag,
-body.show-cursor .row-drag { opacity: 0.4; }
-.row-drag:hover              { opacity: 1 !important; color: var(--text-mid); }
+body.show-cursor .row-drag { opacity: 0.9; }
+.row-drag:hover              { opacity: 1 !important; color: var(--text); }
 .row-drag:active             { cursor: grabbing; }
 .row.home-row .row-drag      { opacity: 0 !important; pointer-events: none; cursor: default; }
 
@@ -401,7 +432,7 @@ body.show-cursor .row-drag { opacity: 0.4; }
   border: 1px solid var(--rule);
   will-change: transform;
   display: grid;
-  grid-template-columns: 18px 2.5fr 1fr 0.6fr 1.5fr auto;
+  grid-template-columns: var(--row-cols);
   align-items: center;
   gap: clamp(10px, 1.5vw, 24px);
   padding: 0 clamp(10px, 1.5vw, 24px);
@@ -454,7 +485,10 @@ body.show-cursor .row-drag { opacity: 0.4; }
 
 .picker {
   background: #0e0f10;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule-strong);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
   width: min(580px, 92vw);
   height: min(600px, 88vh);
   display: flex;
@@ -479,13 +513,14 @@ body.show-cursor .row-drag { opacity: 0.4; }
   color: var(--text);
 }
 .picker-close {
-  background: none; border: 1px solid var(--rule);
-  color: var(--text-mid); font-size: 18px; 
-  width: 32px; height: 32px; cursor: pointer;
+  background: none; border: 1px solid var(--rule-strong);
+  border-radius: 50%;
+  color: var(--text-mid); font-size: 18px;
+  width: 34px; height: 34px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: color 0.2s, border-color 0.2s;
 }
-.picker-close:hover { color: var(--danger-hover); border-color: var(--danger); cursor: pointer; }
+.picker-close:hover { color: var(--text); border-color: var(--text-dim); }
 
 .picker-search-wrap {
   padding: 16px 32px;
@@ -494,16 +529,17 @@ body.show-cursor .row-drag { opacity: 0.4; }
 .picker-search {
   width: 100%;
   background: #141516;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
   color: var(--text);
   font-family: var(--font-mono);
   font-size: 13px;
-  padding: 10px 14px;
+  padding: 10px 18px;
   outline: none;
   letter-spacing: 0.05em;
 }
 .picker-search::placeholder { color: var(--text-dim); }
-.picker-search:focus { border-color: var(--danger); }
+.picker-search:focus { border-color: var(--danger-hover); }
 
 .picker-list {
   overflow-y: auto;
@@ -521,11 +557,13 @@ body.show-cursor .row-drag { opacity: 0.4; }
   padding: 11px 32px;
   cursor: pointer;
   transition: background 0.15s;
-  border-bottom: 1px solid rgba(26,26,28,0.5);
+  border-bottom: 1px solid #18191b;
 }
-.picker-item:hover { background: rgba(192,64,64,0.06); cursor: pointer; }
-.picker-item.selected { opacity: 0.35; cursor: default; }
-.picker-item.selected:hover { background: none; }
+.picker-item:hover { background: rgba(255,255,255,0.035); }
+.picker-item.is-home { cursor: default; }
+.picker-item.is-home:hover { background: none; }
+.picker-item.is-full { cursor: default; }
+.picker-item.is-full .picker-city-name { color: var(--text-mid); }
 
 .picker-item-left { display: flex; flex-direction: column; gap: 3px; }
 .picker-city-name {
@@ -535,8 +573,8 @@ body.show-cursor .row-drag { opacity: 0.4; }
   color: var(--text);
 }
 .picker-tz-name {
-  font-size: 10px;
-  letter-spacing: 0.25em;
+  font-size: 11px;
+  letter-spacing: 0.16em;
   color: var(--text-dim);
   text-transform: uppercase;
 }
@@ -546,14 +584,23 @@ body.show-cursor .row-drag { opacity: 0.4; }
   color: var(--text-mid);
   letter-spacing: 0.05em;
 }
-.picker-item.selected .picker-item-time { color: var(--text-mid); }
+.picker-item-right { display: flex; align-items: center; gap: 14px; }
+/* Add / on-board state: a round toggle */
 .picker-add-icon {
-  font-size: 18px;
-  color: var(--text-dim);
-  margin-left: 14px;
-  transition: color 0.15s;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--rule-strong);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--text-mid);
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
-.picker-item:not(.selected):hover .picker-add-icon { color: var(--danger-hover); }
+.picker-item:hover .picker-add-icon { color: var(--text); border-color: var(--text-dim); }
+.picker-item.selected .picker-add-icon { color: #fff; background: var(--danger); border-color: var(--danger); }
+.picker-item.selected:not(.is-home):hover .picker-add-icon { background: transparent; color: var(--danger-hover); border-color: var(--danger-hover); }
+.picker-item.is-home .picker-add-icon { background: transparent; border-color: var(--rule-strong); color: var(--text-dim); font-size: 10px; letter-spacing: .1em; width: auto; padding: 0 10px; border-radius: 999px; }
+.picker-item.is-full .picker-add-icon { opacity: 0.4; }
 
 .picker-footer {
   padding: 14px 32px;
@@ -563,25 +610,29 @@ body.show-cursor .row-drag { opacity: 0.4; }
   align-items: center;
 }
 .picker-count {
-  font-size: 10px;
-  letter-spacing: 0.3em;
+  font-size: 11px;
+  letter-spacing: 0.16em;
   color: var(--text-dim);
   text-transform: uppercase;
 }
+.picker-count[hidden] { display: block; visibility: hidden; }
 .picker-count span { color: var(--danger-hover); }
 .picker-done {
   background: none;
   border: 1px solid var(--danger);
-  color: var(--danger-hover);
+  border-radius: 999px;
+  color: #fff;
+  background: var(--danger);
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.3em;
+  font-weight: 500;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  padding: 8px 20px;
+  padding: 9px 22px;
   cursor: pointer;
   transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
-.picker-done:hover { background: var(--danger); color: var(--text); cursor: pointer; }
+.picker-done:hover { background: var(--danger-hover); border-color: var(--danger-hover); }
 
 .no-results {
   padding: 30px 32px;
@@ -592,232 +643,173 @@ body.show-cursor .row-drag { opacity: 0.4; }
 }
 
 /* ─────────────────────────────────────────────────────
-   PICKER TABS — CITIES / THEME
+   PICKER TABS
 ───────────────────────────────────────────────────── */
 .picker-tabs {
   display: flex;
+  gap: 4px;
+  padding: 0 32px;
   border-bottom: 1px solid var(--rule);
 }
 .picker-tab {
-  flex: 1;
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
   color: var(--text-dim);
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.4em;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  padding: 14px 0;
+  padding: 14px 14px 12px;
+  margin-bottom: -1px;
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s;
-  margin-bottom: -1px;
 }
-.picker-tab:hover { color: var(--text-mid); }
-.picker-tab.active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
-  transition: color 0.4s, border-color 0.4s;
-}
+.picker-tab:first-child { margin-left: -14px; }
+.picker-tab:hover { color: var(--text); }
+.picker-tab.active { color: var(--text); border-bottom-color: var(--danger-hover); }
 
 /* Panel visibility */
 .picker-panel { display: none; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; }
 .picker-panel.active { display: flex; }
 
 /* ─────────────────────────────────────────────────────
-   THEME PANEL — swatch grid
+   COLOURS AND SOUND PANELS
 ───────────────────────────────────────────────────── */
-.theme-panel {
-  padding: 28px 32px 24px;
+.pref-panel {
+  padding: 24px 32px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 26px;
   overflow-y: auto;
   flex: 1;
   min-height: 0;
 }
-.theme-section-label {
-  font-size: 9px;
-  letter-spacing: 0.5em;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  margin-bottom: 4px;
-}
-.theme-swatches {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-.theme-swatch {
-  position: relative;
-  background: none;
-  border: 1px solid var(--rule);
-  cursor: pointer;
-  padding: 16px 10px 13px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  transition: border-color 0.2s, background 0.2s;
-}
-.theme-swatch:hover { background: rgba(255,255,255,0.03); }
-.theme-swatch.active {
-  border-color: var(--accent);
-  background: rgba(255,255,255,0.04);
-  transition: border-color 0.4s, background 0.4s;
-}
-.theme-dot {
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.theme-swatch:hover .theme-dot { transform: scale(1.12); }
-.theme-swatch.active .theme-dot {
-  box-shadow: 0 0 10px 3px currentColor;
-  transform: scale(1.18);
-  transition: transform 0.4s, box-shadow 0.4s;
-}
-.theme-name {
+.pref-section { display: flex; flex-direction: column; gap: 12px; }
+.pref-row { flex-direction: row; align-items: center; justify-content: space-between; gap: 20px; }
+.pref-head { display: flex; flex-direction: column; gap: 3px; }
+.pref-label {
+  margin: 0;
   font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.35em;
-  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  transition: color 0.2s;
-  white-space: nowrap;
+  color: var(--text);
 }
-.theme-swatch:hover .theme-name { color: var(--text-mid); }
-.theme-swatch.active .theme-name {
-  color: var(--accent);
-  transition: color 0.4s;
-}
-/* Active indicator dot */
-.theme-swatch::after {
-  content: '';
-  position: absolute;
-  top: 7px; right: 7px;
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--accent);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.theme-swatch.active::after { opacity: 1; }
+.pref-hint { margin: 0; font-size: 12px; letter-spacing: 0.02em; color: var(--text-dim); }
 
-/* ─────────────────────────────────────────────────────
-   SOUND KIT SELECTOR
-───────────────────────────────────────────────────── */
-.sound-kits {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.kit-card {
+/* Colour swatches, with a custom picker as the last one */
+.swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+.swatch {
   position: relative;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  padding: 3px;
   background: none;
-  border: 1px solid var(--rule);
   cursor: pointer;
-  padding: 14px 18px 13px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  transition: border-color 0.2s, background 0.2s;
-  text-align: left;
-  width: 100%;
+  transition: border-color 0.2s, transform 0.15s;
 }
-.kit-card:hover { background: rgba(255,255,255,0.03); }
-.kit-card.active {
-  border-color: var(--danger);
-  background: rgba(255,255,255,0.04);
+.swatch:hover { transform: scale(1.08); }
+.swatch span { display: block; width: 100%; height: 100%; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12); }
+.swatch.active { border-color: var(--text); }
+.swatch--custom span {
+  background: conic-gradient(#ff5f5f, #ffcf4d, #6ee7a0, #4dc3ff, #9d7bff, #ff6fc8, #ff5f5f);
 }
-.kit-icon {
-  font-size: 20px;
+.swatch--custom input {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: 0; padding: 0;
+}
+.swatch--custom.active span { box-shadow: inset 0 0 0 7px var(--swatch-custom, transparent); }
+
+/* On/off switch */
+.switch {
   flex-shrink: 0;
-  width: 28px;
-  text-align: center;
-  opacity: 0.7;
-  transition: opacity 0.2s;
+  position: relative;
+  width: 44px; height: 24px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  background: #1b1c1e;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
 }
-.kit-card.active .kit-icon { opacity: 1; }
-.kit-card:hover .kit-icon  { opacity: 0.9; }
-.kit-text { display: flex; flex-direction: column; gap: 3px; }
-.kit-name {
+.switch span {
+  position: absolute; top: 3px; left: 3px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  transition: transform 0.2s, background 0.2s;
+}
+.switch[aria-checked="true"] { background: var(--danger); border-color: var(--danger); }
+.switch[aria-checked="true"] span { transform: translateX(20px); background: #fff; }
+
+.pref-reset {
+  align-self: flex-start;
+  background: none;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  color: var(--text-mid);
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.35em;
-  color: var(--text-mid);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  transition: color 0.2s;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
 }
-.kit-card.active  .kit-name { color: var(--danger-hover); }
-.kit-desc {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  line-height: 1.5;
-}
-/* Active tick */
-.kit-card::after {
-  content: '';
-  position: absolute;
-  top: 8px; right: 10px;
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--danger);
-  opacity: 0;
-  transition: opacity 0.25s;
-}
-.kit-card.active::after { opacity: 1; }
+.pref-reset:hover { color: var(--text); border-color: var(--text-dim); }
 
-/* Preview play button */
+/* Sound profiles */
+.sound-kits { display: flex; flex-direction: column; gap: 8px; }
+.kit-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.kit-card:hover { background: rgba(255,255,255,0.03); }
+.kit-card.active { border-color: var(--danger-hover); background: rgba(255,255,255,0.04); }
+.kit-radio {
+  flex-shrink: 0;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--text-dim);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.kit-card.active .kit-radio { border-color: var(--danger-hover); box-shadow: inset 0 0 0 3px #0e0f10, inset 0 0 0 8px var(--danger-hover); }
+.kit-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.kit-name {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.kit-desc { font-size: 12px; color: var(--text-dim); }
 .kit-preview {
   margin-left: auto;
   flex-shrink: 0;
-  width: 26px; height: 26px;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--rule-strong);
   background: none;
-  border: 1px solid var(--rule);
-  color: var(--text-dim);
-  font-size: 10px;
+  color: var(--text-mid);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: color 0.2s, border-color 0.2s;
-  border-radius: 0;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
-.kit-preview:hover { color: var(--danger-hover); border-color: var(--danger); }
-
-/* Pitch variation legend */
-.pitch-info {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.pitch-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.pitch-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.pitch-dot--realtime { background: var(--danger-hover); box-shadow: 0 0 6px 1px var(--danger); }
-.pitch-dot--idle     { background: var(--text-dim); }
-.pitch-desc {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  line-height: 1.5;
-}
-.pitch-desc strong {
-  color: var(--text-mid);
-  font-weight: 500;
-}
+.kit-preview svg { width: 12px; height: 12px; margin-left: 2px; }
+.kit-preview:hover, .kit-preview.playing { color: #fff; background: var(--danger); border-color: var(--danger); }
 
 /* ─────────────────────────────────────────────────────
    CIRCADIAN TINTING
@@ -946,14 +938,16 @@ body.show-cursor .row-drag { opacity: 0.4; }
   .picker { height: 94vh; }
   .picker-header { padding: 10px 20px 8px; }
   .picker-title { font-size: 20px; }
-  .picker-tab { padding: 9px 0; }
+  .picker-tab { padding: 9px 12px 8px; }
   .picker-search-wrap { padding: 8px 20px; }
   .picker-search { padding: 7px 12px; }
   .picker-item { padding: 7px 20px; }
   .picker-footer { padding: 7px 20px !important; }
   .picker-done { padding-top: 6px; padding-bottom: 6px; }
-  .theme-panel { padding: 12px 20px; gap: 12px; }
-  .kit-card { padding: 10px 14px 9px; }
+  .pref-panel { padding: 14px 20px; gap: 16px; }
+  .picker-tabs { padding: 0 20px; }
+  .kit-card { padding: 8px 12px; }
+  .swatch { width: 30px; height: 30px; }
 }
 
 /* Touch screens: bar buttons big enough to tap */
@@ -969,7 +963,7 @@ body.show-cursor .row-drag { opacity: 0.4; }
   text-transform: uppercase;
   color: var(--text-dim);
 }
-.picker-credit a { color: var(--text-mid); text-decoration: none; }
+.picker-credit a { color: var(--text); text-decoration: none; }
 .picker-credit a:hover { color: var(--text); }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1042,49 +1036,65 @@ body.show-cursor .row-drag { opacity: 0.4; }
     </div>
 
     <!-- Tabs -->
-    <div class="picker-tabs">
-      <button class="picker-tab active" id="tabCities" data-tab="cities">Cities</button>
-      <button class="picker-tab"        id="tabTheme"  data-tab="theme">Colour Theme</button>
-      <button class="picker-tab"        id="tabSound"  data-tab="sound">Sound</button>
+    <div class="picker-tabs" role="tablist">
+      <button class="picker-tab active" id="tabCities"  data-tab="cities"  role="tab">Cities</button>
+      <button class="picker-tab"        id="tabColours" data-tab="colours" role="tab">Colours</button>
+      <button class="picker-tab"        id="tabSound"   data-tab="sound"   role="tab">Sound</button>
     </div>
 
     <!-- Panel: Cities -->
     <div class="picker-panel active" id="panelCities">
       <div class="picker-search-wrap">
-        <input class="picker-search" id="pickerSearch" type="text" placeholder="Search city or timezone..." autocomplete="off" spellcheck="false">
+        <input class="picker-search" id="pickerSearch" type="text" placeholder="Search by city, country or time zone" autocomplete="off" spellcheck="false">
       </div>
       <div class="picker-list" id="pickerList"></div>
-      <div class="picker-footer">
-        <div class="picker-count">Cities: <span id="cityCount">0</span> / 10</div>
-        <button class="picker-done" id="pickerDone">DONE</button>
-      </div>
     </div>
 
-    <!-- Panel: Theme -->
-    <div class="picker-panel" id="panelTheme">
-      <div class="theme-panel">
-        <div>
-          <div class="theme-section-label">Accent Colour</div>
-          <div class="theme-swatches" id="themeSwatches"></div>
-        </div>
-      </div>
-      <div class="picker-footer" style="border-top:1px solid var(--rule); padding:14px 32px; display:flex; justify-content:flex-end;">
-        <button class="picker-done" id="themeDone">DONE</button>
+    <!-- Panel: Colours -->
+    <div class="picker-panel" id="panelColours">
+      <div class="pref-panel">
+        <section class="pref-section">
+          <div class="pref-head">
+            <h3 class="pref-label">Characters</h3>
+            <p class="pref-hint">The letters and numbers on the flaps</p>
+          </div>
+          <div class="swatches" id="inkSwatches"></div>
+        </section>
+        <section class="pref-section">
+          <div class="pref-head">
+            <h3 class="pref-label">Accent</h3>
+            <p class="pref-hint">Buttons, highlights and this panel</p>
+          </div>
+          <div class="swatches" id="accentSwatches"></div>
+        </section>
+        <section class="pref-section pref-row">
+          <div class="pref-head">
+            <h3 class="pref-label">Backlit glow</h3>
+            <p class="pref-hint">A soft light behind the characters</p>
+          </div>
+          <button class="switch" id="glowSwitch" role="switch" aria-checked="true" aria-label="Backlit glow"><span></span></button>
+        </section>
+        <button class="pref-reset" id="coloursReset">Reset colours</button>
       </div>
     </div>
 
     <!-- Panel: Sound -->
     <div class="picker-panel" id="panelSound">
-      <div class="theme-panel">
-        <div>
-          <div class="theme-section-label">Acoustic Profile</div>
-          <div class="sound-kits" id="soundKits"></div>
-        </div>
+      <div class="pref-panel">
+        <section class="pref-section">
+          <div class="pref-head">
+            <h3 class="pref-label">Flap sound</h3>
+            <p class="pref-hint">Press play to hear one. Previews play even when the clock is muted.</p>
+          </div>
+          <div class="sound-kits" id="soundKits" role="radiogroup" aria-label="Flap sound"></div>
+        </section>
+      </div>
+    </div>
 
-      </div>
-      <div class="picker-footer" style="border-top:1px solid var(--rule); padding:14px 32px; display:flex; justify-content:flex-end;">
-        <button class="picker-done" id="soundDone">DONE</button>
-      </div>
+    <!-- Shared footer -->
+    <div class="picker-footer">
+      <div class="picker-count" id="pickerCount">Cities <span id="cityCount">0</span> / 10</div>
+      <button class="picker-done" id="pickerDone">Done</button>
     </div>
 
   </div>
@@ -1477,12 +1487,53 @@ const formatSeconds = (tz) => new Intl.DateTimeFormat('en-GB', {
   timeZone: tz, second: '2-digit', hour12: false
 }).format(new Date()).padStart(2, '0');
 
+/* "TUE 02 NOV": always 10 flaps, so every row lines up */
 const formatDate = (tz) => {
   const n = new Date();
-  const opt = { timeZone: tz, weekday: 'short', month: '2-digit', day: '2-digit' };
-  const parts = new Intl.DateTimeFormat('en-US', opt).formatToParts(n);
-  const get = (t) => parts.find(p => p.type === t).value.toUpperCase();
-  return `${get('weekday')} ${get('month')}/${get('day')}`;
+  const opt = { timeZone: tz, weekday: 'short', month: 'short', day: 'numeric' };
+  const parts = new Intl.DateTimeFormat('en-GB', opt).formatToParts(n);
+  const get = (t) => parts.find(p => p.type === t).value.toUpperCase().slice(0, 3);
+  return `${get('weekday')} ${get('day').padStart(2, '0')} ${get('month')}`;
+};
+
+/* Minutes ahead of UTC for a time zone, right now */
+const utcOffsetMinutes = (tz) => {
+  const now = new Date();
+  now.setSeconds(0, 0);
+  const asUTC = new Date(now.toLocaleString('en-US', { timeZone: 'UTC' }));
+  const asTz  = new Date(now.toLocaleString('en-US', { timeZone: tz }));
+  return Math.round((asTz - asUTC) / 60000);
+};
+
+/* "+5H", "−8H", "+5:30", "0H"; "HOME" for the home city */
+const formatOffset = (tz, isHome) => {
+  if (isHome) return 'HOME';
+  const diff = utcOffsetMinutes(tz) - utcOffsetMinutes(USER_TZ);
+  if (diff === 0) return '0H';
+  const sign = diff > 0 ? '+' : '\u2212';
+  const h = Math.floor(Math.abs(diff) / 60);
+  const m = Math.abs(diff) % 60;
+  return m ? `${sign}${h}:${String(m).padStart(2, '0')}` : `${sign}${h}H`;
+};
+
+/* Daytime from 6am to 6pm local time */
+const isDaytime = (tz) => {
+  const h = Number(new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour: '2-digit', hourCycle: 'h23' }).format(new Date()));
+  return h >= 6 && h < 18;
+};
+
+const ICON_SUN  = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></g></svg>';
+const ICON_MOON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.6A8.2 8.2 0 0 1 9.4 4a8.2 8.2 0 1 0 10.6 10.6z" fill="currentColor"/></svg>';
+
+const renderInfo = (el, tz, isHome) => {
+  const day = isDaytime(tz);
+  const offset = formatOffset(tz, isHome);
+  const key = `${day}|${offset}`;
+  if (el.dataset.key === key) return;
+  el.dataset.key = key;
+  el.classList.toggle('is-day', day);
+  el.title = `${day ? 'Daytime' : 'Night-time'}${isHome ? '' : `, ${offset.replace('H', ' h')} from home`}`;
+  el.innerHTML = `<span class="row-info__icon">${day ? ICON_SUN : ICON_MOON}</span><span class="row-info__offset">${offset}</span>`;
 };
 
 const formatLocalDateFull = (tz) => {
@@ -1550,7 +1601,12 @@ const renderRows = () => {
     const cityCell = createCell(city.name, 16, 'cell-city');
     const timeCell = createCell(formatTime(city.tz), 5, 'cell-time');
     const secCell  = createCell(formatSeconds(city.tz), 2, 'cell-sec');
-    const dateCell = createCell(formatDate(city.tz), 9, 'cell-day');
+    const dateCell = createCell(formatDate(city.tz), 10, 'cell-day');
+
+    // Day/night and time difference from home
+    const info = document.createElement('div');
+    info.className = 'row-info';
+    renderInfo(info, city.tz, idx === 0);
 
     // AM/PM badge — floats above the time cell, visible only in 12h mode
     const ampmBadge = document.createElement('span');
@@ -1566,10 +1622,10 @@ const renderRows = () => {
     delBtn.setAttribute('aria-label', `Remove ${city.name}`);
 
     if (idx === 0) {
-      delBtn.innerHTML = '⌂';
-      delBtn.style.opacity = '0.2';
-      delBtn.style.cursor = 'default';
-      delBtn.title = 'Home city (auto-detected)';
+      // Home city can't be removed: keep the slot so columns line up
+      delBtn.style.visibility = 'hidden';
+      delBtn.tabIndex = -1;
+      delBtn.setAttribute('aria-hidden', 'true');
     } else {
       delBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1584,6 +1640,7 @@ const renderRows = () => {
     row.appendChild(timeCell);
     row.appendChild(secCell);
     row.appendChild(dateCell);
+    row.appendChild(info);
     row.appendChild(delBtn);
     container.appendChild(row);
 
@@ -1594,6 +1651,8 @@ const renderRows = () => {
       secTiles:  secCell.querySelectorAll('.tile'),
       dateTiles: dateCell.querySelectorAll('.tile'),
       cityTiles: cityCell.querySelectorAll('.tile'),
+      info,
+      isHome: idx === 0,
       ampmBadge,
       lastTime: '',
       lastSec: ''
@@ -1607,29 +1666,38 @@ const renderRows = () => {
 /* ─────────────────────────────────────────────────────
    FIT TO SCREEN
 
-   Tiles keep their natural size (36–56px) when there is
-   room. On short screens (phones in landscape, or ten
-   cities on a laptop) they shrink so every row fits,
-   and the characters scale with them via --tile-h.
+   The board grows with the screen: tiles are as tall as
+   their width allows (a little taller than wide, like real
+   flaps), up to the height left once every row fits. The
+   characters, gaps and info column all scale from --tile-h.
 ───────────────────────────────────────────────────── */
+const ROW_GAP_RATIO = 0.24;   // matches .rows gap in CSS
+const TILE_ASPECT   = 1.7;    // tile height ÷ tile width (real flaps are tall)
+const TILE_MAX      = 150;
+
 const fitBoard = () => {
   const board  = document.querySelector('.board');
   const header = document.querySelector('.header');
   const n = rowStates.length;
   if (!board || !header || !n) return;
+  const root = document.documentElement;
 
   const bs = getComputedStyle(board);
   const hs = getComputedStyle(header);
-  const gap = parseFloat(getComputedStyle(container).rowGap) || 0;
-  // Measure against the window: the board itself grows with its rows
   const avail = window.innerHeight
     - parseFloat(bs.paddingTop) - parseFloat(bs.paddingBottom)
     - header.offsetHeight - parseFloat(hs.marginBottom);
+  const byHeight = avail / (n + ROW_GAP_RATIO * (n - 1));
 
-  const natural = Math.min(56, Math.max(36, window.innerHeight * 0.042));
-  const fitted  = Math.floor((avail - gap * (n - 1)) / n);
-  const tileH   = Math.max(14, Math.min(natural, fitted));
-  document.documentElement.style.setProperty('--tile-h', `${tileH}px`);
+  // The info column's width depends on --tile-h, so settle in two passes
+  let tileH = Math.min(byHeight, TILE_MAX);
+  for (let pass = 0; pass < 2; pass++) {
+    root.style.setProperty('--tile-h', `${tileH}px`);
+    const tile = container.querySelector('.cell-city .tile');
+    const byWidth = tile ? tile.getBoundingClientRect().width * TILE_ASPECT : tileH;
+    tileH = Math.max(14, Math.min(byHeight, byWidth, TILE_MAX));
+  }
+  root.style.setProperty('--tile-h', `${Math.floor(tileH)}px`);
 };
 
 let fitFrame = 0;
@@ -1800,6 +1868,7 @@ const updateAllRows = () => {
     if (nowTime !== s.lastTime) {
       updateTiles(s.timeTiles, nowTime);
       updateTiles(s.dateTiles, nowDate);
+      renderInfo(s.info, s.tz, s.isHome);
       // Refresh AM/PM badge (period can flip at noon/midnight)
       if (s.ampmBadge) s.ampmBadge.textContent = getPeriod(s.tz);
       s.lastTime = nowTime;
@@ -1809,7 +1878,12 @@ const updateAllRows = () => {
 
 const startUpdating = () => {
   if (updateInterval) clearInterval(updateInterval);
-  updateInterval = setInterval(updateAllRows, 1000); // 1s tick for seconds
+  // Start the 1s tick just after the next whole second, so the seconds
+  // flaps turn over with the real clock rather than up to a second late
+  setTimeout(() => {
+    updateAllRows();
+    updateInterval = setInterval(updateAllRows, 1000);
+  }, 1000 - (Date.now() % 1000) + 15);
 };
 
 /* ─────────────────────────────────────────────────────
@@ -1933,15 +2007,16 @@ const buildReverbIR = (ctx, decay) => {
 // Cache reverb IR per kit to avoid rebuilding every click
 const reverbCache = {};
 
-const playClick = (variant = 0, context = 'realtime') => {
-  if (soundMuted) return;
+const playClick = (variant = 0, context = 'realtime', kitId = activeKitId, preview = false) => {
+  // Mute silences the board; a preview in Preferences always plays
+  if (soundMuted && !preview) return;
   // Browsers only allow audio after a tap, click or key press
   if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return;
   const now = performance.now();
   if (now - lastClickTime < 14) return;
   lastClickTime = now;
 
-  const kit = KITS[activeKitId] || KITS.airport;
+  const kit = KITS[kitId] || KITS.airport;
 
   // Pitch multiplier per context
   const pitchMult =
@@ -2089,43 +2164,55 @@ const saveSoundPrefs = () => {
   } catch(e) {}
 };
 
-/* Render kit cards into #soundKits */
+/* Render the sound profiles into #soundKits */
+const PLAY_ICON = '<svg viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0l10 6-10 6z" fill="currentColor"/></svg>';
+
+const previewKit = (kitId, btn) => {
+  // A short run of flaps, like a word settling on the board
+  const delays = [0, 70, 140, 230, 300, 420];
+  delays.forEach((d, i) => setTimeout(() => playClick(i, 'realtime', kitId, true), d));
+  if (btn) {
+    btn.classList.add('playing');
+    setTimeout(() => btn.classList.remove('playing'), 520);
+  }
+};
+
 const renderKitCards = () => {
   const grid = document.getElementById('soundKits');
   if (!grid) return;
   grid.innerHTML = '';
 
   Object.values(KITS).forEach(kit => {
-    const card = document.createElement('button');
-    card.className   = 'kit-card' + (kit.id === activeKitId ? ' active' : '');
-    card.dataset.kitId = kit.id;
-
+    const isActive = kit.id === activeKitId;
+    const card = document.createElement('div');
+    card.className = 'kit-card' + (isActive ? ' active' : '');
+    card.setAttribute('role', 'radio');
+    card.setAttribute('aria-checked', String(isActive));
+    card.tabIndex = 0;
     card.innerHTML = `
-      <span class="kit-icon">${kit.icon}</span>
+      <span class="kit-radio" aria-hidden="true"></span>
       <span class="kit-text">
         <span class="kit-name">${kit.label}</span>
         <span class="kit-desc">${kit.desc}</span>
       </span>
-      <button class="kit-preview" title="Preview sound" aria-label="Preview ${kit.label}">▶</button>
+      <button class="kit-preview" type="button" title="Play ${kit.label}" aria-label="Play ${kit.label}">${PLAY_ICON}</button>
     `;
 
-    // Select kit
-    card.addEventListener('click', (e) => {
-      if (e.target.classList.contains('kit-preview')) return;
+    const select = () => {
       activeKitId = kit.id;
       saveSoundPrefs();
       renderKitCards();
+      previewKit(kit.id);
+    };
+    card.addEventListener('click', (e) => { if (!e.target.closest('.kit-preview')) select(); });
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(); }
     });
 
-    // Preview button plays 3 rapid clicks in the selected kit
     const previewBtn = card.querySelector('.kit-preview');
     previewBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const prevKit = activeKitId;
-      activeKitId = kit.id;
-      [0, 80, 160].forEach(delay =>
-        setTimeout(() => playClick(delay % 4, 'realtime'), delay));
-      setTimeout(() => { activeKitId = prevKit; }, 300);
+      previewKit(kit.id, previewBtn);
     });
 
     grid.appendChild(card);
@@ -2215,137 +2302,158 @@ const scheduleIdleFlips = () => {
 };
 
 /* ─────────────────────────────────────────────────────
-   COLOUR ACCENT THEMES
-   Scope: icons (settings gear, mute btn), volume slider,
-   divider, picker UI chrome. NOT the header city name.
+   COLOURS
 
-   applyTheme() writes --danger / --danger-hover (the icon
-   hover colour vars) AND imperatively paints every live
-   controls-bar element directly so their CSS transitions fire.
+   Two colours the viewer can pick, plus the backlit glow:
+     ink    : the characters on the flaps (--flap-ink)
+     accent : controls, highlights and Preferences
+              (--danger for borders, --danger-hover for text)
+   Each has preset swatches and a custom colour picker.
+   Saved as one object; older saves of the accent theme
+   (terminaltime_theme_v1) carry over.
 ───────────────────────────────────────────────────── */
-const ACCENT_THEMES = [
-  { id: 'red',       label: 'Red',       accent: '#c04040', accentHover: '#e05050' },
-  { id: 'amber',     label: 'Amber',     accent: '#d4820a', accentHover: '#ffb930' },
-  { id: 'green',     label: 'Green',     accent: '#1ec963', accentHover: '#39ff8e' },
-  { id: 'yellow',    label: 'Yellow',    accent: '#c8b800', accentHover: '#f5e642' },
-  { id: 'blue',      label: 'Blue',      accent: '#1a8fd1', accentHover: '#3db8ff' },
-  { id: 'orange',    label: 'Orange',    accent: '#d45f10', accentHover: '#ff7020' },
-  { id: 'pink',      label: 'Pink',      accent: '#c0306e', accentHover: '#ff4daa' },
-  { id: 'white',     label: 'White',     accent: '#909088', accentHover: '#e8e8e0' },
-  { id: 'turquoise', label: 'Turquoise', accent: '#00a898', accentHover: '#00e5cc' },
+const COLOURS_KEY = 'terminaltime_colours_v1';
+const OLD_THEME_KEY = 'terminaltime_theme_v1';
+
+const INK_PRESETS = [
+  { label: 'Warm white', hex: '#ece6d6' },
+  { label: 'Amber',      hex: '#ffb347' },
+  { label: 'Yellow',     hex: '#ffd84d' },
+  { label: 'Green',      hex: '#6ee7a0' },
+  { label: 'Ice blue',   hex: '#9fd8ff' },
+  { label: 'Cool white', hex: '#f4f6fa' },
 ];
+const ACCENT_PRESETS = [
+  { label: 'Red',       hex: '#e05050' },
+  { label: 'Amber',     hex: '#ffb930' },
+  { label: 'Orange',    hex: '#ff7020' },
+  { label: 'Yellow',    hex: '#f5e642' },
+  { label: 'Green',     hex: '#39ff8e' },
+  { label: 'Turquoise', hex: '#00e5cc' },
+  { label: 'Blue',      hex: '#3db8ff' },
+  { label: 'Pink',      hex: '#ff4daa' },
+  { label: 'White',     hex: '#e8e8e0' },
+];
+const OLD_THEME_ACCENTS = { red: '#e05050', amber: '#ffb930', green: '#39ff8e', yellow: '#f5e642', blue: '#3db8ff', orange: '#ff7020', pink: '#ff4daa', white: '#e8e8e0', turquoise: '#00e5cc' };
+const DEFAULT_COLOURS = { ink: INK_PRESETS[0].hex, accent: ACCENT_PRESETS[0].hex, glow: true };
 
-const THEME_STORAGE_KEY = 'terminaltime_theme_v1';
-let activeThemeId = 'red';
+let colours = { ...DEFAULT_COLOURS };
 
-const applyTheme = (id, save = true) => {
-  const theme = ACCENT_THEMES.find(t => t.id === id);
-  if (!theme) return;
-  activeThemeId = id;
-  const { accent, accentHover } = theme;
+const hexToRgb = (hex) => {
+  const n = parseInt(hex.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+};
+const shade = (hex, f) => {   // f < 1 darkens
+  const [r, g, b] = hexToRgb(hex).map(v => Math.round(v * f));
+  return `rgb(${r},${g},${b})`;
+};
+const isHex = (v) => typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v);
 
-  /* 1 — Update --danger / --danger-hover so all CSS hover rules
-         (ctrl-btn:hover, controls-bar:hover rules) pick up the new colour */
+const applyColours = () => {
   const root = document.documentElement;
-  root.style.setProperty('--danger',       accent);
-  root.style.setProperty('--danger-hover', accentHover);
-
-  /* 2 — All controls-bar elements are now driven directly by the
-         --danger / --danger-hover CSS vars set above. No imperative
-         painting needed; setProperty triggers CSS transitions. */
-
-  /* 3 — Picker UI chrome */
-  document.querySelectorAll('.picker-tab').forEach(tab => {
-    if (tab.classList.contains('active')) {
-      tab.style.transition = 'color 0.35s ease, border-bottom-color 0.35s ease';
-      tab.style.color = accentHover;
-      tab.style.borderBottomColor = accentHover;
-    }
-  });
-
-  document.querySelectorAll('.picker-done').forEach(el => {
-    el.style.transition = 'color 0.35s ease, border-color 0.35s ease';
-    el.style.color = accentHover;
-    el.style.borderColor = accent;
-  });
-
-  document.querySelectorAll('.picker-count span').forEach(el => {
-    el.style.transition = 'color 0.35s ease';
-    el.style.color = accentHover;
-  });
-
-  /* 4 — Active swatch highlight */
-  document.querySelectorAll('.theme-swatch').forEach(el => {
-    const isActive = el.dataset.themeId === id;
-    el.classList.toggle('active', isActive);
-    const nameEl = el.querySelector('.theme-name');
-    if (isActive) {
-      el.style.borderColor = accentHover;
-      if (nameEl) nameEl.style.color = accentHover;
-    } else {
-      el.style.borderColor = '';
-      if (nameEl) nameEl.style.color = '';
-    }
-  });
-
-  if (save) {
-    try { localStorage.setItem(THEME_STORAGE_KEY, id); } catch(e) {}
-  }
+  root.style.setProperty('--flap-ink', colours.ink);
+  // The default warm white keeps its amber glow; other colours glow in their own hue
+  const [r, g, b] = colours.ink === DEFAULT_COLOURS.ink ? [255, 176, 80] : hexToRgb(colours.ink);
+  root.style.setProperty('--flap-glow', `rgba(${r},${g},${b},0.42)`);
+  root.style.setProperty('--danger-hover', colours.accent);
+  root.style.setProperty('--danger', shade(colours.accent, 0.62));
+  document.body.classList.toggle('no-glow', !colours.glow);
 };
 
-const loadTheme = () => {
+const saveColours = () => {
+  try { localStorage.setItem(COLOURS_KEY, JSON.stringify(colours)); } catch (e) {}
+};
+
+const loadColours = () => {
   try {
-    const saved = localStorage.getItem(THEME_STORAGE_KEY);
-    if (saved && ACCENT_THEMES.find(t => t.id === saved)) return saved;
-  } catch(e) {}
-  return 'red';
+    const saved = JSON.parse(localStorage.getItem(COLOURS_KEY) || 'null');
+    if (saved) {
+      return {
+        ink:    isHex(saved.ink)    ? saved.ink    : DEFAULT_COLOURS.ink,
+        accent: isHex(saved.accent) ? saved.accent : DEFAULT_COLOURS.accent,
+        glow:   saved.glow !== false,
+      };
+    }
+    const oldTheme = localStorage.getItem(OLD_THEME_KEY);
+    if (oldTheme && OLD_THEME_ACCENTS[oldTheme]) return { ...DEFAULT_COLOURS, accent: OLD_THEME_ACCENTS[oldTheme] };
+  } catch (e) {}
+  return { ...DEFAULT_COLOURS };
 };
 
-/* Render swatch buttons into #themeSwatches */
-const renderThemeSwatches = () => {
-  const grid = document.getElementById('themeSwatches');
-  if (!grid) return;
-  grid.innerHTML = '';
+const setColour = (key, hex) => {
+  colours[key] = hex.toLowerCase();
+  applyColours();
+  saveColours();
+  renderColourPanel();
+};
 
-  ACCENT_THEMES.forEach(theme => {
-    const isActive = theme.id === activeThemeId;
+const renderSwatches = (containerId, key, presets, customLabel) => {
+  const box = document.getElementById(containerId);
+  if (!box) return;
+  box.innerHTML = '';
+  const current = colours[key];
+  const isPreset = presets.some(p => p.hex === current);
+
+  presets.forEach(p => {
     const btn = document.createElement('button');
-    btn.className = 'theme-swatch' + (isActive ? ' active' : '');
-    btn.dataset.themeId     = theme.id;
-    btn.dataset.themeAccent = theme.accentHover;
-    btn.setAttribute('aria-label', `${theme.label} theme`);
-    if (isActive) btn.style.borderColor = theme.accentHover;
-
-    btn.innerHTML = `
-      <span class="theme-dot" style="
-        background: ${theme.accentHover};
-        box-shadow: 0 0 10px 3px ${theme.accentHover}66;
-      "></span>
-      <span class="theme-name" style="${isActive ? `color:${theme.accentHover}` : ''}">${theme.label}</span>
-    `;
-    btn.addEventListener('click', () => {
-      applyTheme(theme.id);
-      renderThemeSwatches();
-    });
-    grid.appendChild(btn);
+    btn.className = 'swatch' + (p.hex === current ? ' active' : '');
+    btn.title = p.label;
+    btn.setAttribute('aria-label', p.label);
+    btn.setAttribute('aria-pressed', String(p.hex === current));
+    btn.innerHTML = `<span style="background:${p.hex}"></span>`;
+    btn.addEventListener('click', () => setColour(key, p.hex));
+    box.appendChild(btn);
   });
+
+  // Custom colour: the native picker sits invisibly on top of a rainbow swatch
+  const custom = document.createElement('label');
+  custom.className = 'swatch swatch--custom' + (isPreset ? '' : ' active');
+  custom.title = customLabel;
+  if (!isPreset) custom.style.setProperty('--swatch-custom', current);
+  custom.innerHTML = `<span></span><input type="color" value="${current}" aria-label="${customLabel}">`;
+  const input = custom.querySelector('input');
+  input.addEventListener('input', () => {
+    colours[key] = input.value.toLowerCase();
+    applyColours();
+    custom.style.setProperty('--swatch-custom', input.value);
+    box.querySelectorAll('.swatch').forEach(el => el.classList.toggle('active', el === custom));
+  });
+  input.addEventListener('change', () => setColour(key, input.value));
+  box.appendChild(custom);
 };
+
+const renderColourPanel = () => {
+  renderSwatches('inkSwatches', 'ink', INK_PRESETS, 'Pick any character colour');
+  renderSwatches('accentSwatches', 'accent', ACCENT_PRESETS, 'Pick any accent colour');
+  document.getElementById('glowSwitch').setAttribute('aria-checked', String(colours.glow));
+};
+
+document.getElementById('glowSwitch').addEventListener('click', () => {
+  colours.glow = !colours.glow;
+  applyColours();
+  saveColours();
+  renderColourPanel();
+});
+document.getElementById('coloursReset').addEventListener('click', () => {
+  colours = { ...DEFAULT_COLOURS };
+  applyColours();
+  saveColours();
+  renderColourPanel();
+});
 
 /* Tab switching */
 const switchPickerTab = (tabId) => {
-  const currentTheme = ACCENT_THEMES.find(t => t.id === activeThemeId);
   document.querySelectorAll('.picker-tab').forEach(tab => {
     const isActive = tab.dataset.tab === tabId;
     tab.classList.toggle('active', isActive);
-    tab.style.transition = 'color 0.35s ease, border-bottom-color 0.35s ease';
-    tab.style.color             = isActive && currentTheme ? currentTheme.accentHover : '';
-    tab.style.borderBottomColor = isActive && currentTheme ? currentTheme.accentHover : '';
+    tab.setAttribute('aria-selected', String(isActive));
   });
   document.querySelectorAll('.picker-panel').forEach(p => {
     p.classList.toggle('active',
       p.id === `panel${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`);
   });
-  if (tabId === 'theme') renderThemeSwatches();
+  document.getElementById('pickerCount').hidden = tabId !== 'cities';
+  if (tabId === 'colours') renderColourPanel();
   if (tabId === 'sound') renderKitCards();
 };
 
@@ -2370,7 +2478,7 @@ const removeCity = (idx) => {
   selectedCities.splice(idx, 1);
   saveToStorage();
   renderRows();
-  renderPickerList();
+  renderPickerList(pickerSearch.value);
   updateCountDisplay();
 };
 
@@ -2381,7 +2489,7 @@ const addCity = (city) => {
   selectedCities.push(city);
   saveToStorage();
   renderRows();
-  renderPickerList();
+  renderPickerList(pickerSearch.value);
   updateCountDisplay();
 };
 
@@ -2627,26 +2735,37 @@ const renderPickerList = (query = '') => {
 
   filtered.forEach(city => {
     const isSelected = selectedNames.has(city.name);
+    const isHome = selectedCities[0] && selectedCities[0].name === city.name;
     const atMax = selectedCities.length >= MAX_CITIES;
+    const isFull = !isSelected && atMax;
 
+    // Tap to add a city; tap again to take it off the board (except home)
     const item = document.createElement('div');
-    item.className = `picker-item${isSelected ? ' selected' : ''}`;
+    item.className = 'picker-item' + (isSelected ? ' selected' : '') + (isHome ? ' is-home' : '') + (isFull ? ' is-full' : '');
+    const icon = isHome ? 'HOME' : isSelected ? '✓' : '+';
+    item.title = isHome ? 'Your home city' : isSelected ? `Remove ${city.name}` : isFull ? 'The board is full (10 cities)' : `Add ${city.name}`;
 
     item.innerHTML = `
       <div class="picker-item-left">
         <div class="picker-city-name">${city.name}</div>
-        <div class="picker-tz-name">${city.region} · ${city.tz.replace('_',' ')}</div>
+        <div class="picker-tz-name">${city.region} · ${city.tz.replace(/_/g, ' ')}</div>
       </div>
-      <div style="display:flex;align-items:center;gap:6px">
+      <div class="picker-item-right">
         <div class="picker-item-time">${formatTime(city.tz)}</div>
-        ${!isSelected ? `<div class="picker-add-icon">${atMax ? '—' : '+'}</div>` : '<div class="picker-add-icon" style="color:var(--accent);opacity:0.5">✓</div>'}
+        <div class="picker-add-icon" aria-hidden="true">${icon}</div>
       </div>
     `;
 
-    if (!isSelected && !atMax) {
-      item.addEventListener('click', () => {
-        addCity(city);
-        renderPickerList(pickerSearch.value);
+    if (!isHome && !isFull) {
+      item.setAttribute('role', 'button');
+      item.tabIndex = 0;
+      const toggle = () => {
+        if (isSelected) removeCity(selectedCities.findIndex(c => c.name === city.name));
+        else addCity(city);
+      };
+      item.addEventListener('click', toggle);
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
       });
     }
 
@@ -2701,8 +2820,6 @@ timeFormatBtn.addEventListener('click', () => {
 });
 document.getElementById('pickerClose').addEventListener('click', closePicker);
 document.getElementById('pickerDone').addEventListener('click', closePicker);
-document.getElementById('themeDone').addEventListener('click', closePicker);
-document.getElementById('soundDone').addEventListener('click', closePicker);
 
 /* ── Flip button ── */
 const flipBtn = document.getElementById('flipBtn');
@@ -2872,9 +2989,9 @@ const init = () => {
   loadTimeFormat();
   updateTimeFormatBtn();
 
-  // Load and apply saved colour theme
-  activeThemeId = loadTheme();
-  applyTheme(activeThemeId, false);
+  // Load and apply saved colours
+  colours = loadColours();
+  applyColours();
 
   // Build city list: home city always first
   const home = getHomeCityEntry();
