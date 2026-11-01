@@ -12,10 +12,10 @@ if (screen && frame) {
   new ResizeObserver(fit).observe(screen);
 }
 
-// Footer: copy the content once more for the yellow half. Each layer is
+// Footer: copy the content once more for the terracotta half. Each layer is
 // clipped to its own triangle with ink that reads well on its colour.
 // Screen readers and keyboards only meet the real content; the copy's
-// links still work for a mouse or a tap on the yellow side.
+// links still work for a mouse or a tap on the terracotta side.
 const layer = document.querySelector('.foot__layer');
 if (layer) {
   const sun = layer.cloneNode(true);

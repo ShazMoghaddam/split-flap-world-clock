@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Site: a light theme, so the page and the logo stand out, with the clock preview kept dark like a screen on a desk.
+- Site: the four top buttons are matching pills, with Open the clock no longer picked out in red.
+- Site: a terracotta and slate navy footer, and the headline accent now matches it.
+- The social preview image says "Any browser" instead of "Android".
+
 ## 1.0.0 (2026-10-31)
 
 First release as a web clock, with its own site.
