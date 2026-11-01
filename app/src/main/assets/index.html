@@ -4,15 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#080808">
-<meta name="description" content="Terminal Time — Atmospheric split-flap world clock screensaver">
+<meta name="description" content="Split-Flap World Clock: an atmospheric split-flap departure board for world time">
+<meta name="author" content="Shaz Moghaddam, London">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Terminal Time">
-<title>Terminal Time — Atmospheric Screensaver</title>
-
-<!-- PWA manifest — inlined as data URI, no separate file needed -->
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Terminal%20Time%22%2C%22short_name%22%3A%22TermTime%22%2C%22description%22%3A%22Atmospheric%20split-flap%20world%20clock%20screensaver%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23080808%22%2C%22theme_color%22%3A%22%23080808%22%2C%22orientation%22%3A%22landscape%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%2520viewBox%3D'0%25200%252096%252096'%253E%253Crect%2520width%3D'96'%2520height%3D'96'%2520fill%3D'%2523080808'%2F%253E%253Ctext%2520x%3D'48'%2520y%3D'68'%2520font-size%3D'56'%2520text-anchor%3D'middle'%2520fill%3D'%2523c04040'%253E%25E2%258F%25B1%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+<meta name="apple-mobile-web-app-title" content="Split-Flap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230c0d0e'/%3E%3Crect x='5' y='6' width='10' height='20' rx='2' fill='%232a2b2d'/%3E%3Crect x='17' y='6' width='10' height='20' rx='2' fill='%232a2b2d'/%3E%3Crect x='5' y='6' width='10' height='9.5' rx='2' fill='%233a3b3e'/%3E%3Crect x='17' y='6' width='10' height='9.5' rx='2' fill='%233a3b3e'/%3E%3Cpath d='M4 16h24' stroke='%23050505' stroke-width='1.6'/%3E%3Crect x='5' y='27.5' width='22' height='1.6' rx='.8' fill='%23e05050'/%3E%3C/svg%3E">
+<title>Split-Flap World Clock</title>
 
 <style>
 /* ── Self-hosted fonts ── */
@@ -54,117 +53,6 @@
 }
 </style>
 
-<!-- ═══════════════════════════════════════════════════════
-     PWA — SERVICE WORKER
-
-     Requires sw.js in the same directory as this file.
-     Without it the app still works perfectly online —
-     the offline cache just won't be available.
-
-     Caching strategy (defined in sw.js):
-       App shell (.html)   → cache-first
-       Google Fonts CSS    → stale-while-revalidate
-       Font files          → cache-first (immutable)
-       Everything else     → network-first, cache fallback
-═══════════════════════════════════════════════════════ -->
-<script id="sw-installer">
-(function () {
-  if (!('serviceWorker' in navigator)) return;
-
-  let swReg = null;
-
-  /* ── Register sw.js ── */
-  navigator.serviceWorker.register('./sw.js', { scope: './' })
-    .then(reg => {
-      swReg = reg;
-
-      /* When a new SW is found, activate it immediately */
-      reg.addEventListener('updatefound', () => {
-        const incoming = reg.installing;
-        if (!incoming) return;
-        incoming.addEventListener('statechange', () => {
-          if (incoming.state === 'installed' && navigator.serviceWorker.controller) {
-            incoming.postMessage({ type: 'SKIP_WAITING' });
-          }
-        });
-      });
-
-      /* Warm the cache with font URLs discovered after page load */
-      window.addEventListener('load', () => {
-        if (!reg.active) return;
-        const fontUrls = performance.getEntriesByType('resource')
-          .filter(e => e.name.includes('gstatic') || e.name.includes('fonts.googleapis'))
-          .map(e => e.name)
-          .filter(u => u.startsWith('https://'));
-        if (fontUrls.length) {
-          reg.active.postMessage({ type: 'CACHE_URLS', urls: fontUrls });
-        }
-      });
-    })
-    .catch(() => {
-      /* sw.js not found or SW blocked (e.g. file://) — silent fail */
-    });
-
-  /* ── On controller change: show "Updated" toast then reload ── */
-  let reloading = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (reloading) return;
-    reloading = true;
-    const toast = document.getElementById('update-toast');
-    if (!toast) { location.reload(); return; }
-    toast.classList.add('visible');
-    setTimeout(() => location.reload(), 1800);
-  });
-
-  /* ── Offline / online badge ── */
-  function syncOfflineBadge() {
-    const el = document.getElementById('offline-badge');
-    if (el) el.classList.toggle('visible', !navigator.onLine);
-  }
-  window.addEventListener('online',  syncOfflineBadge);
-  window.addEventListener('offline', syncOfflineBadge);
-  document.addEventListener('DOMContentLoaded', syncOfflineBadge);
-
-  /* ── Install prompt (Add to Home Screen) ── */
-  let deferredPrompt = null;
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    setTimeout(() => {
-      const nudge = document.getElementById('install-nudge');
-      if (nudge) nudge.classList.add('visible');
-    }, 4000);
-  });
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const nudge       = document.getElementById('install-nudge');
-    const nudgeBtn    = document.getElementById('install-btn');
-    const nudgeDismiss= document.getElementById('install-dismiss');
-    if (nudgeBtn) {
-      nudgeBtn.addEventListener('click', async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        if (nudge) nudge.classList.remove('visible');
-      });
-    }
-    if (nudgeDismiss) {
-      nudgeDismiss.addEventListener('click', () => {
-        if (nudge) nudge.classList.remove('visible');
-        deferredPrompt = null;
-      });
-    }
-  });
-
-  window.addEventListener('appinstalled', () => {
-    const nudge = document.getElementById('install-nudge');
-    if (nudge) nudge.classList.remove('visible');
-    deferredPrompt = null;
-  });
-
-})();
-</script>
 
 <style>
 /* ─────────────────────────────────────────────────────
@@ -240,128 +128,6 @@ body {
   flex-direction: column;
   justify-content: center;
 }
-
-/* ─────────────────────────────────────────────────────
-   PWA UI — OFFLINE BADGE, UPDATE TOAST, INSTALL NUDGE
-───────────────────────────────────────────────────── */
-
-/* Offline badge */
-#offline-badge {
-  position: fixed;
-  top: 20px;
-  right: 24px;
-  z-index: 400;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: var(--text-mid);
-  border: 1px solid var(--rule);
-  padding: 5px 10px 5px 9px;
-  background: rgba(8,8,8,0.92);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
-}
-#offline-badge.visible { opacity: 1; }
-#offline-badge::before {
-  content: '';
-  display: inline-block;
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--text-dim);
-  flex-shrink: 0;
-  animation: pulseDot 2.4s ease-in-out infinite;
-}
-@keyframes pulseDot {
-  0%, 100% { opacity: 0.3; }
-  50%       { opacity: 1;   }
-}
-
-/* Update toast */
-#update-toast {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%) translateY(12px);
-  z-index: 500;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: var(--text-mid);
-  border: 1px solid var(--rule);
-  padding: 7px 16px;
-  background: rgba(8,8,8,0.96);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  white-space: nowrap;
-}
-#update-toast.visible {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* Install nudge */
-#install-nudge {
-  position: fixed;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%) translateY(16px);
-  z-index: 450;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: var(--font-mono);
-  border: 1px solid var(--rule);
-  padding: 9px 14px 9px 16px;
-  background: rgba(8,8,8,0.96);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  white-space: nowrap;
-}
-#install-nudge.visible {
-  opacity: 1;
-  pointer-events: all;
-  transform: translateX(-50%) translateY(0);
-}
-.install-nudge-text {
-  font-size: 9px;
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
-.install-nudge-btn {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--danger-hover);
-  border: 1px solid var(--danger);
-  background: none;
-  padding: 4px 10px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-.install-nudge-btn:hover {
-  background: rgba(192,64,64,0.12);
-}
-.install-nudge-dismiss {
-  background: none;
-  border: none;
-  color: var(--text-dim);
-  font-size: 11px;
-  cursor: pointer;
-  padding: 2px 4px;
-  line-height: 1;
-  transition: color 0.2s;
-}
-.install-nudge-dismiss:hover { color: var(--text-mid); }
 
 /* ─────────────────────────────────────────────────────
    BOTTOM CONTROLS BAR (settings + sound)
@@ -506,7 +272,7 @@ body.show-cursor { cursor: default; }
 }
 .local-city {
   font-family: var(--font-display);
-  font-size: clamp(48px, 8vw, 120px);
+  font-size: clamp(30px, min(8vw, 13vh), 120px);
   color: var(--text);
   line-height: 0.85;
   letter-spacing: 0.05em;
@@ -544,7 +310,7 @@ body.show-cursor { cursor: default; }
 .flap-cell { display: flex; gap: 2px; }
 
 .tile {
-  height: clamp(36px, 4.2vh, 56px);
+  height: var(--tile-h, clamp(36px, 4.2vh, 56px));
   flex: 1;
   background: var(--tile);
   position: relative;
@@ -569,16 +335,16 @@ body.show-cursor { cursor: default; }
   position: relative;
   z-index: 3;
   color: var(--text);
-  font-size: clamp(13px, 1.5vw, 22px);
+  font-size: min(clamp(13px, 1.5vw, 22px), calc(var(--tile-h, 56px) * 0.52));
   font-weight: 500;
   text-transform: uppercase;
 }
-.cell-day .tile-char  { color: var(--text); font-size: clamp(10px, 1.1vw, 15px); }
-.cell-sec .tile-char  { color: var(--text); font-size: clamp(11px, 1.2vw, 17px); }
+.cell-day .tile-char  { color: var(--text); font-size: min(clamp(10px, 1.1vw, 15px), calc(var(--tile-h, 56px) * 0.42)); }
+.cell-sec .tile-char  { color: var(--text); font-size: min(clamp(11px, 1.2vw, 17px), calc(var(--tile-h, 56px) * 0.46)); }
 
 /* Row delete button */
 .row-delete {
-  width: 28px; height: 28px;
+  width: 28px; height: min(28px, var(--tile-h, 28px));
   background: none;
   border: 1px solid transparent;
   color: var(--text-dim);
@@ -689,9 +455,8 @@ body.show-cursor .row-drag { opacity: 0.4; }
 .picker {
   background: #0e0f10;
   border: 1px solid var(--rule);
-  width: 580px;
-  min-height: 460px;
-  max-height: 80vh;
+  width: min(580px, 92vw);
+  height: min(600px, 88vh);
   display: flex;
   flex-direction: column;
   animation: pickerIn 0.25s ease-out;
@@ -1168,6 +933,49 @@ body.show-cursor .row-drag { opacity: 0.4; }
     rgba(0, 0, 0, 0.35) 100%
   );
 }
+
+/* ─────────────────────────────────────────────────────
+   SMALL SCREENS, TOUCH AND REDUCED MOTION
+───────────────────────────────────────────────────── */
+/* Phones in landscape: tighter margins so every row fits */
+@media (max-height: 520px) {
+  .board  { padding: 4vh 4vw 12vh 4vw; }
+  .header { padding-bottom: 2vh; margin-bottom: 2.5vh; }
+  .local-date { margin-top: 4px; }
+  .controls-bar { bottom: 12px; right: 16px; }
+  .picker { height: 94vh; }
+  .picker-header { padding: 10px 20px 8px; }
+  .picker-title { font-size: 20px; }
+  .picker-tab { padding: 9px 0; }
+  .picker-search-wrap { padding: 8px 20px; }
+  .picker-search { padding: 7px 12px; }
+  .picker-item { padding: 7px 20px; }
+  .picker-footer { padding: 7px 20px !important; }
+  .picker-done { padding-top: 6px; padding-bottom: 6px; }
+  .theme-panel { padding: 12px 20px; gap: 12px; }
+  .kit-card { padding: 10px 14px 9px; }
+}
+
+/* Touch screens: bar buttons big enough to tap */
+@media (hover: none) {
+  .ctrl-btn { min-width: 40px; min-height: 40px; }
+}
+
+/* Credit line in Preferences */
+.picker-credit {
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.picker-credit a { color: var(--text-mid); text-decoration: none; }
+.picker-credit a:hover { color: var(--text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .stage { animation: none; opacity: 1; }
+  .crt-grain::before { animation: none !important; }
+}
 </style>
 </head>
 <body>
@@ -1195,6 +1003,10 @@ body.show-cursor .row-drag { opacity: 0.4; }
     <div class="ctrl-divider"></div>
     <button class="ctrl-btn ctrl-btn--text" id="flipBtn" title="Full Flip cascade (F)" aria-label="Full Flip">F</button>
     <div class="ctrl-divider"></div>
+    <button class="ctrl-btn" id="fullscreenBtn" title="Full screen (Shift+F)" aria-label="Toggle full screen">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+    </button>
+    <div class="ctrl-divider"></div>
     <button class="ctrl-btn" id="muteBtn" title="Toggle mute" aria-label="Toggle mute">
       <svg id="muteIcon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
         <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
@@ -1206,19 +1018,6 @@ body.show-cursor .row-drag { opacity: 0.4; }
       <span class="sound-vol-val" id="volVal">5</span>
     </div>
   </div>
-</div>
-
-<!-- Offline indicator — shown when network is unavailable -->
-<div id="offline-badge" aria-live="polite" aria-label="Offline — showing cached content">Offline</div>
-
-<!-- Update toast — briefly shown when a new SW activates -->
-<div id="update-toast" aria-live="polite">Updated — reloading</div>
-
-<!-- Install nudge — shown when the browser fires beforeinstallprompt -->
-<div id="install-nudge" aria-label="Install Terminal Time">
-  <span class="install-nudge-text">Add to Home Screen</span>
-  <button id="install-btn"     class="install-nudge-btn">Install</button>
-  <button id="install-dismiss" class="install-nudge-dismiss" aria-label="Dismiss">✕</button>
 </div>
 
 <!-- ── CRT & FILM GRAIN OVERLAYS ── -->
@@ -1235,6 +1034,7 @@ body.show-cursor .row-drag { opacity: 0.4; }
     <div class="picker-header">
       <div>
         <div class="picker-title" id="pickerTitle">PREFERENCES</div>
+        <div class="picker-credit">v1.0.0 · Created by <a href="https://shazmoghaddam.github.io" target="_blank" rel="noopener">Shaz Moghaddam</a>, London</div>
       </div>
       <button class="picker-close" id="pickerClose" title="Close" aria-label="Close">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
@@ -1745,7 +1545,7 @@ const renderRows = () => {
     const dragHandle = document.createElement('div');
     dragHandle.className = 'row-drag';
     dragHandle.innerHTML = '⠿';
-    dragHandle.title = idx === 0 ? 'Home city — cannot reorder' : 'Drag to reorder';
+    dragHandle.title = idx === 0 ? 'Home city, always first' : 'Drag to reorder';
 
     const cityCell = createCell(city.name, 16, 'cell-city');
     const timeCell = createCell(formatTime(city.tz), 5, 'cell-time');
@@ -1801,7 +1601,42 @@ const renderRows = () => {
   });
 
   updateAllRows();
+  fitBoard();
 };
+
+/* ─────────────────────────────────────────────────────
+   FIT TO SCREEN
+
+   Tiles keep their natural size (36–56px) when there is
+   room. On short screens (phones in landscape, or ten
+   cities on a laptop) they shrink so every row fits,
+   and the characters scale with them via --tile-h.
+───────────────────────────────────────────────────── */
+const fitBoard = () => {
+  const board  = document.querySelector('.board');
+  const header = document.querySelector('.header');
+  const n = rowStates.length;
+  if (!board || !header || !n) return;
+
+  const bs = getComputedStyle(board);
+  const hs = getComputedStyle(header);
+  const gap = parseFloat(getComputedStyle(container).rowGap) || 0;
+  // Measure against the window: the board itself grows with its rows
+  const avail = window.innerHeight
+    - parseFloat(bs.paddingTop) - parseFloat(bs.paddingBottom)
+    - header.offsetHeight - parseFloat(hs.marginBottom);
+
+  const natural = Math.min(56, Math.max(36, window.innerHeight * 0.042));
+  const fitted  = Math.floor((avail - gap * (n - 1)) / n);
+  const tileH   = Math.max(14, Math.min(natural, fitted));
+  document.documentElement.style.setProperty('--tile-h', `${tileH}px`);
+};
+
+let fitFrame = 0;
+window.addEventListener('resize', () => {
+  cancelAnimationFrame(fitFrame);
+  fitFrame = requestAnimationFrame(fitBoard);
+});
 
 /* ─────────────────────────────────────────────────────
    DRAG-TO-REORDER ENGINE
@@ -2013,7 +1848,7 @@ const KITS = {
     id:            'heavy',
     label:         'Heavy Mechanical',
     icon:          '⚙',
-    desc:          'Deep metallic thuds — industrial weight',
+    desc:          'Deep metallic thuds, industrial weight',
     basePitch:     820,        // bandpass centre Hz
     bpQ:           0.6,        // wide, boomy
     noiseLen:      0.058,      // 58ms noise burst
@@ -2033,7 +1868,7 @@ const KITS = {
     id:            'plastic',
     label:         'Plastic Rattle',
     icon:          '◈',
-    desc:          'Light fast clicks — typewriter crispness',
+    desc:          'Light fast clicks, typewriter crispness',
     basePitch:     2900,
     bpQ:           1.8,        // narrow, rattly
     noiseLen:      0.020,      // 20ms — very snappy
@@ -2052,7 +1887,7 @@ const KITS = {
     id:            'airport',
     label:         'Classic Airport',
     icon:          '✈',
-    desc:          'High-reverb clatter — large terminal echo',
+    desc:          'High-reverb clatter, large terminal echo',
     basePitch:     1550,
     bpQ:           0.85,
     noiseLen:      0.065,      // longer burst feeds the reverb
@@ -2100,6 +1935,8 @@ const reverbCache = {};
 
 const playClick = (variant = 0, context = 'realtime') => {
   if (soundMuted) return;
+  // Browsers only allow audio after a tap, click or key press
+  if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return;
   const now = performance.now();
   if (now - lastClickTime < 14) return;
   lastClickTime = now;
@@ -2755,7 +2592,8 @@ const pickerList = document.getElementById('pickerList');
 const openPicker = () => {
   overlay.classList.add('open');
   pickerSearch.value = '';
-  pickerSearch.focus();
+  // Skip auto-focus on touch screens so the keyboard doesn't cover the list
+  if (window.matchMedia('(hover: hover)').matches) pickerSearch.focus();
   renderPickerList();
   updateCountDisplay();
   document.body.classList.add('show-cursor');
@@ -2903,11 +2741,43 @@ document.addEventListener('keydown', (e) => {
       !e.ctrlKey && !e.metaKey && !e.altKey &&
       !overlay.classList.contains('open') &&
       document.activeElement.tagName !== 'INPUT') {
-    fireFlip();
+    if (e.shiftKey) toggleFullscreen();
+    else fireFlip();
   }
 });
 
 document.addEventListener('mousemove', showCursor);
+document.addEventListener('pointerdown', showCursor);
+
+/* ── Full screen (browsers that support it; hidden elsewhere) ── */
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+const canFullscreen = !!document.documentElement.requestFullscreen;
+const toggleFullscreen = () => {
+  if (!canFullscreen) return;
+  if (document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen().catch(() => {});
+};
+if (canFullscreen) {
+  fullscreenBtn.addEventListener('click', toggleFullscreen);
+  document.addEventListener('fullscreenchange', () => {
+    fullscreenBtn.classList.toggle('active', !!document.fullscreenElement);
+    fullscreenBtn.title = document.fullscreenElement ? 'Exit full screen (Shift+F)' : 'Full screen (Shift+F)';
+  });
+} else {
+  fullscreenBtn.hidden = true;
+  fullscreenBtn.previousElementSibling.hidden = true; // its divider
+}
+
+/* ── Keep the screen awake while the clock is showing ── */
+let wakeLock = null;
+const requestWakeLock = async () => {
+  if (!('wakeLock' in navigator) || document.visibilityState !== 'visible') return;
+  try { wakeLock = await navigator.wakeLock.request('screen'); } catch (e) { wakeLock = null; }
+};
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') requestWakeLock();
+});
+document.addEventListener('pointerdown', requestWakeLock, { once: true });
 
 /* ─────────────────────────────────────────────────────
    LOCAL CITY HEADER
@@ -3026,6 +2896,7 @@ const init = () => {
   renderRows();
   startUpdating();
   scheduleIdleFlips();
+  requestWakeLock();
 };
 
 window.addEventListener('DOMContentLoaded', init);

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Split-Flap World Clock</title>
+<meta name="description" content="A free split-flap departure board for world time. Open it in any browser, go full screen, and turn a spare laptop, monitor or tablet into a desk clock.">
+<link rel="canonical" href="https://shazmoghaddam.github.io/split-flap-world-clock/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Split-Flap World Clock">
+<meta property="og:title" content="Split-Flap World Clock: a departure board for world time">
+<meta property="og:description" content="Up to ten cities on mechanical flaps, with sound, a night tint and full screen. Free and open source, nothing to install.">
+<meta property="og:url" content="https://shazmoghaddam.github.io/split-flap-world-clock/">
+<meta property="og:image" content="https://shazmoghaddam.github.io/split-flap-world-clock/docs/social-preview.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta property="og:image:alt" content="Split-Flap World Clock: a dark departure board showing London, New York, Tokyo, Paris, Dubai, Singapore and Los Angeles">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#080808">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230c0d0e'/%3E%3Crect x='5' y='6' width='10' height='20' rx='2' fill='%232a2b2d'/%3E%3Crect x='17' y='6' width='10' height='20' rx='2' fill='%232a2b2d'/%3E%3Crect x='5' y='6' width='10' height='9.5' rx='2' fill='%233a3b3e'/%3E%3Crect x='17' y='6' width='10' height='9.5' rx='2' fill='%233a3b3e'/%3E%3Cpath d='M4 16h24' stroke='%23050505' stroke-width='1.6'/%3E%3Crect x='5' y='27.5' width='22' height='1.6' rx='.8' fill='%23e05050'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/BebasNeue.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="site.css">
+<script src="site.js" defer></script>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar__in">
+    <a class="mark" href="#top" aria-label="Split-Flap World Clock, back to the top">
+      <svg class="mark__glyph" viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="6" width="10" height="20" rx="2" class="mark__tile"/><rect x="17" y="6" width="10" height="20" rx="2" class="mark__tile"/><rect x="5" y="6" width="10" height="9.5" rx="2" class="mark__top"/><rect x="17" y="6" width="10" height="9.5" rx="2" class="mark__top"/><path d="M4 16h24" class="mark__seam"/><rect x="5" y="27.5" width="22" height="1.6" rx=".8" class="mark__accent"/></svg>
+      <span>Split-Flap World Clock</span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#features">Features</a>
+      <a href="#use">How to use it</a>
+      <a href="https://github.com/ShazMoghaddam/split-flap-world-clock">GitHub</a>
+      <a class="nav__open" href="clock/">Open the clock</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1>A departure board<br>for <em>world time.</em></h1>
+    <p class="lede">Your cities on rows of mechanical flaps that clatter over as the minutes change. Open it in any browser, go full screen, and a spare laptop, monitor or tablet becomes a desk clock.</p>
+  </section>
+
+  <section class="stage-wrap" aria-label="Live preview">
+    <a class="preview" href="clock/" aria-label="Open the clock">
+      <div class="preview__screen">
+        <iframe class="preview__frame" src="clock/" title="Live preview of the clock" tabindex="-1" loading="eager"></iframe>
+      </div>
+      <span class="preview__cta">Open the clock <span aria-hidden="true">→</span></span>
+    </a>
+    <p class="stage-note">Live preview in your own time zone. Click it to open the full clock.</p>
+  </section>
+
+  <section class="section" id="features" aria-labelledby="features-h">
+    <h2 id="features-h" class="eyebrow">Features</h2>
+    <ul class="features">
+      <li>
+        <h3>Your cities</h3>
+        <p>Up to ten from 290 cities around the world. Your home city comes from your device and stays on top; drag the rest into any order.</p>
+      </li>
+      <li>
+        <h3>Feels mechanical</h3>
+        <p>Tiles flip when they change, idle tiles twitch now and then, and <kbd>F</kbd> sends a cascade across the whole board.</p>
+      </li>
+      <li>
+        <h3>Sounds right</h3>
+        <p>Three flap sounds made live in the browser: heavy mechanical, plastic rattle and classic airport. Volume and mute included.</p>
+      </li>
+      <li>
+        <h3>Easy on the eyes at night</h3>
+        <p>The board drifts from a cool daylight white to a dim amber through the evening, and back again by morning.</p>
+      </li>
+      <li>
+        <h3>Fits any screen</h3>
+        <p>From a small laptop to a 4K monitor, every row fits without scrolling, even with ten cities.</p>
+      </li>
+      <li>
+        <h3>Private and offline</h3>
+        <p>One self-contained file with the fonts built in. No accounts, no tracking, and nothing leaves your device.</p>
+      </li>
+    </ul>
+  </section>
+
+  <section class="section" id="use" aria-labelledby="use-h">
+    <h2 id="use-h" class="eyebrow">How to use it</h2>
+    <div class="use">
+      <ol class="steps">
+        <li>
+          <h3>Open the clock</h3>
+          <p><a href="clock/">Open it here</a> in Chrome, Safari, Edge or Firefox. It starts with your home city and six others.</p>
+        </li>
+        <li>
+          <h3>Go full screen</h3>
+          <p>Move the mouse or tap to show the controls, then press the full screen button or <kbd>Shift</kbd> + <kbd>F</kbd>. The screen stays awake while the clock is showing, where the browser allows it.</p>
+        </li>
+        <li>
+          <h3>Make it yours</h3>
+          <p>The gear opens Preferences: search for cities, pick one of nine accent colours and choose a flap sound. Everything is saved in your browser.</p>
+        </li>
+      </ol>
+
+      <div class="keys">
+        <h3>Controls</h3>
+        <dl>
+          <div><dt><kbd>F</kbd></dt><dd>Flip the whole board</dd></div>
+          <div><dt><kbd>Shift</kbd> + <kbd>F</kbd></dt><dd>Full screen on or off</dd></div>
+          <div><dt><kbd>Esc</kbd></dt><dd>Close Preferences</dd></div>
+          <div><dt>24H / 12H</dt><dd>Switch the time format</dd></div>
+          <div><dt>Row handles</dt><dd>Drag to reorder, or remove a city</dd></div>
+        </dl>
+        <p class="keys__tip">On an iPad or iPhone, use Share, then Add to Home Screen, and open it from there for a full-screen clock.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <!-- One layer of content. site.js copies it once more for the yellow half; each copy is clipped to its own triangle. -->
+  <div class="foot__layer">
+    <div class="foot__in">
+      <div class="foot__about">
+        <a class="mark" href="#top" aria-label="Split-Flap World Clock, back to the top">
+          <svg class="mark__glyph" viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="6" width="10" height="20" rx="2" class="mark__tile"/><rect x="17" y="6" width="10" height="20" rx="2" class="mark__tile"/><path d="M4 16h24" class="mark__seam"/></svg>
+          <span>Split-Flap World Clock</span>
+        </a>
+        <p class="foot__eyebrow">Open source · v1.0.0</p>
+        <p class="foot__lede">An airport departure board for the time in your favourite cities. One web page with nothing to install, made for a spare screen on your desk.</p>
+      </div>
+
+      <dl class="foot__specs">
+        <div><dt>Cities</dt><dd>290</dd></div>
+        <div><dt>Files</dt><dd>1</dd></div>
+        <div><dt>Network needed</dt><dd>None</dd></div>
+      </dl>
+
+      <nav class="foot__links" aria-label="Footer">
+        <h2 class="foot__h">Project</h2>
+        <ul>
+          <li><a href="clock/">Open the clock</a></li>
+          <li><a href="https://github.com/ShazMoghaddam/split-flap-world-clock">GitHub</a></li>
+          <li><a href="https://github.com/ShazMoghaddam/split-flap-world-clock#readme">Documentation</a></li>
+          <li><a href="https://github.com/ShazMoghaddam/split-flap-world-clock/blob/main/CHANGELOG.md">Changelog</a></li>
+        </ul>
+      </nav>
+
+      <div class="foot__links">
+        <h2 class="foot__h">Credits</h2>
+        <ul>
+          <li>Fonts: <a href="https://fonts.google.com/specimen/Bebas+Neue">Bebas Neue</a> and <a href="https://fonts.google.com/specimen/IBM+Plex+Mono">IBM Plex Mono</a> (OFL)</li>
+          <li>Sounds synthesised with Web Audio</li>
+          <li><a href="https://github.com/ShazMoghaddam/split-flap-world-clock/blob/main/LICENSE">MIT licence</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot__bar">
+      <div class="foot__bar-in">
+        <p>Designed by <a href="https://shazmoghaddam.github.io">Shaz Moghaddam</a>, London</p>
+        <p class="foot__copy">© 2026 · Free to use under the MIT licence</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
