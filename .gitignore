@@ -18,3 +18,9 @@ keystore.properties
 
 # macOS
 .DS_Store
+
+# Site build output
+_site/
+
+# Python
+__pycache__/
