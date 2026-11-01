@@ -1,40 +1,36 @@
 # Changelog
 
-## Unreleased
-
-- Site: a light theme, so the page and the logo stand out, with the clock preview kept dark like a screen on a desk.
-- Site: the four top buttons are matching pills, with Open the clock no longer picked out in red.
-- Site: a terracotta and slate navy footer, and the headline accent now matches it.
-- The social preview image says "Any browser" instead of "Android".
-- Clock: a bigger, chunkier board. Tiles grow with the screen (taller, like real flaps) and still shrink to fit ten cities.
-- Clock: characters glow softly, like a backlit board, with a switch to turn it off.
-- Clock: each row shows a sun or moon for day or night, and its time difference from home (+5H, −8H, +5:30).
-- Clock: dates read "SUN 01 NOV" instead of "SUN 11/01", so they're the same in every country.
-- Clock: colour pickers replace the accent themes: one for the characters and one for the accent, each with presets and any custom colour. Earlier theme choices carry over.
-- Clock: sound previews in Preferences play even when the clock is muted.
-- Clock: the settings panel is redesigned with brighter text, a single Done button and clearer controls. Tap a city in the list to add it, and tap it again to take it off the board.
-- Clock: brighter row handles and remove buttons, and the seconds now turn over exactly on the second.
-- Clock: Preferences is now called Settings, and the gear's tooltip says so.
-- Clock: a Shortcuts tab in Settings lists the keys and the mouse and touch controls.
-- Clock: a one-time hint on your first visit shows how to bring up the controls, flip the board and go full screen.
-- Clock: sound previews play a single flap, so you hear exactly what each sound is like.
-- Clock: all text uses two consistent, readable brightness levels, and the night-time dimming is gentler.
-- Clock: every change is now a real two-half flap. The top half of the old character falls away and the bottom half of the new one drops into place.
-- Clock: the sun, moon and time difference use the character colour, so they match the board whatever colour you pick.
-- Clock: **F** sends one smooth wave across the board from left to right. Each tile counts up through the letters or digits just before its own and settles, and blank flaps stay still.
-
-## 1.0.0 (2026-10-31)
+## 1.0.0 (2026-11-01)
 
 First release as a web clock, with its own site.
 
-- A split-flap departure board for up to ten of 290 cities, with the home city found from the device, drag to reorder, 12 or 24 hour time, seconds and dates.
-- Flap animations, idle flips and a full-board cascade (**F**), three synthesised sound profiles with volume and mute, nine accent colours, film grain and a tint that warms through the evening.
-- New: a full screen button and **Shift + F**, and the screen stays awake while the clock is showing.
-- Fits every screen: tiles and text shrink to fit short screens and ten-row boards, which used to run off the bottom. Preferences keeps one height across its tabs and scrolls when space is tight.
-- A tap shows the controls on touch screens, and the keyboard no longer pops up over the city list.
-- Sound waits for your first click, tap or key press instead of filling the console with blocked-audio warnings.
-- Removed the unused service worker, install, update and offline banners. The clock never needs the network, and there was no service worker to install.
-- Renamed from "Terminal Time" to Split-Flap World Clock, with a new tab icon and a "Created by Shaz Moghaddam, London" credit in Preferences. Saved settings carry over.
-- Reduced motion turns off the intro fade and the grain.
-- A GitHub Pages site with a live preview, deployed from `main`, and a script to preview it locally.
-- README with screenshots, a social preview image, contributing guide, security policy and Dependabot for the workflows.
+### The board
+- A split-flap departure board for up to ten of 290 cities. Your home city comes from your device's time zone and stays on top, and you can drag the others into any order. It shows 12 or 24 hour time, seconds and dates.
+- Real two-half flaps: the old character's top half falls away and the new bottom half drops into place. This applies to the clock ticking, the idle flips and the cascade.
+- **F** sends one smooth wave from left to right. Each tile counts up through the letters or digits just before its own and settles, and blank flaps stay still.
+- Each row shows a sun or moon for day or night, and its time difference from home ("+5H", "−8H", "+5:30"), in the character colour.
+- Dates read "MON 02 NOV", the same in every country.
+- A soft backlit glow on the characters, which you can turn off.
+- The board grows with the screen, with tiles a little taller than wide like real flaps, and still shrinks so ten cities fit on short screens.
+- A full screen button and **Shift + F**, and the screen stays awake while the clock is showing.
+- The seconds turn over exactly on the second.
+- A tint that warms to amber through the evening, with gentle dimming, film grain and three synthesised flap sounds with volume and mute.
+
+### Settings
+- Four tabs: Cities, Colours, Sound and Shortcuts, with readable text, a rounded panel and one Done button.
+- Tap a city to add it, and tap it again to remove it. Your search stays put after either.
+- Colour pickers for the characters and the accent, each with presets and any custom colour, plus Reset. Accent themes chosen in earlier versions carry over.
+- Sound previews play a single flap, even when the board is muted.
+- A one-time hint on the first visit shows the controls and shortcuts. The site's preview doesn't use it up.
+- A "Created by Shaz Moghaddam, London" credit that links to his website.
+
+### Under the hood
+- Renamed from "Terminal Time" to Split-Flap World Clock, with a new tab icon. Saved settings carry over.
+- Removed the unused service worker and the install, update and offline banners. The clock never needs the network.
+- Sound waits for your first click, tap or key press, so the browser doesn't log blocked-audio warnings.
+- Touch friendly: a tap shows the controls, and the keyboard doesn't pop up over the city list.
+- Reduced motion turns off the intro fade, the grain and the flap animation.
+
+### Site and repo
+- A GitHub Pages site with a live preview of the clock: a light theme with pill buttons and a terracotta and slate navy footer, deployed from `main`, plus a script to preview it locally.
+- README with screenshots, a social preview image, a contributing guide, a security policy and Dependabot for the workflows.
