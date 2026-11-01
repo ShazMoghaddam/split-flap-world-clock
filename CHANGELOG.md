@@ -19,6 +19,9 @@
 - Clock: a one-time hint on your first visit shows how to bring up the controls, flip the board and go full screen.
 - Clock: sound previews play a single flap, so you hear exactly what each sound is like.
 - Clock: all text uses two consistent, readable brightness levels, and the night-time dimming is gentler.
+- Clock: every change is now a real two-half flap. The top half of the old character falls away and the bottom half of the new one drops into place.
+- Clock: the sun, moon and time difference use the character colour, so they match the board whatever colour you pick.
+- Clock: **F** sends one smooth wave across the board from left to right. Each tile counts up through the letters or digits just before its own and settles, and blank flaps stay still.
 
 ## 1.0.0 (2026-10-31)
 
