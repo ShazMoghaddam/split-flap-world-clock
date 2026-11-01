@@ -4,7 +4,7 @@
     python docs/capture.py
 
 Set CHROME_PATH to use an installed Chrome instead of Playwright's.
-Writes docs/board.png, docs/preferences.png and docs/social-preview.png.
+Writes docs/board.png, docs/settings.png and docs/social-preview.png.
 The clock is pinned to a morning time in London so the images are stable
 and show the neutral daytime tint.
 """
@@ -48,8 +48,9 @@ async def main():
         ctx, page = await open_clock(browser, 1280, 720)
         await page.mouse.move(640, 600)
         await page.click("#settingsBtn")
+        await page.click("#tabColours")
         await page.wait_for_timeout(600)
-        await page.screenshot(path=OUT / "preferences.png")
+        await page.screenshot(path=OUT / "settings.png")
         await ctx.close()
 
         # Social preview: the board's own header carries the title.

@@ -2865,6 +2865,8 @@ document.addEventListener('keydown', (e) => {
 /* ── First-visit hint: shows once, about 10 seconds, or until you interact ── */
 const HINT_KEY = 'terminaltime_hint_seen_v1';
 const showFirstHint = () => {
+  // Not inside the site's live preview: save the hint for the real clock
+  if (window.self !== window.top) return;
   let seen = false;
   try { seen = localStorage.getItem(HINT_KEY) === '1'; } catch (e) { seen = true; }
   if (seen) return;

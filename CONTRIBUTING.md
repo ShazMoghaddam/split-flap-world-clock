@@ -1,6 +1,6 @@
 # Contributing to Split-Flap World Clock
 
-Thanks for helping. Bug reports, new cities, themes and sound profiles are all welcome.
+Thanks for helping. Bug reports, new cities, colour presets and sound profiles are all welcome.
 
 ## Setup
 
@@ -24,9 +24,9 @@ Cities live in `ALL_CITIES`, grouped by region. Add an entry with an upper-case 
 
 Names are what the board saves, so don't rename existing cities or people's saved boards will lose them.
 
-## Adding a colour theme
+## Adding a colour preset
 
-Add an entry to `ACCENT_THEMES` with an `id`, a `label`, an `accent` colour and a brighter `accentHover`. Check it against the dark board and in the Preferences panel.
+Colours are picked freely in Settings, and the swatches are just starting points. Add a `{ label, hex }` entry to `INK_PRESETS` (characters) or `ACCENT_PRESETS` (buttons and highlights). Use a six-digit hex colour and check it on the dark board, with the glow on and off.
 
 ## Adding a sound profile
 
