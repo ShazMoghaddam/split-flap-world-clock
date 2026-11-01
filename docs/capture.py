@@ -31,7 +31,7 @@ async def open_clock(browser, width, height):
     page = await ctx.new_page()
     await page.clock.install(time=MORNING)
     await page.goto(PAGE)
-    await page.evaluate("localStorage.clear()")
+    await page.evaluate("localStorage.clear(); localStorage.setItem('terminaltime_hint_seen_v1', '1')")
     await page.reload()
     await page.wait_for_timeout(SETTLE_MS)
     return ctx, page

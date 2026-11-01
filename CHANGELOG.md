@@ -12,8 +12,13 @@
 - Clock: dates read "SUN 01 NOV" instead of "SUN 11/01", so they're the same in every country.
 - Clock: colour pickers replace the accent themes: one for the characters and one for the accent, each with presets and any custom colour. Earlier theme choices carry over.
 - Clock: sound previews in Preferences play even when the clock is muted.
-- Clock: Preferences is redesigned with brighter text, a single Done button and clearer controls. Tap a city in the list to add it, and tap it again to take it off the board.
+- Clock: the settings panel is redesigned with brighter text, a single Done button and clearer controls. Tap a city in the list to add it, and tap it again to take it off the board.
 - Clock: brighter row handles and remove buttons, and the seconds now turn over exactly on the second.
+- Clock: Preferences is now called Settings, and the gear's tooltip says so.
+- Clock: a Shortcuts tab in Settings lists the keys and the mouse and touch controls.
+- Clock: a one-time hint on your first visit shows how to bring up the controls, flip the board and go full screen.
+- Clock: sound previews play a single flap, so you hear exactly what each sound is like.
+- Clock: all text uses two consistent, readable brightness levels, and the night-time dimming is gentler.
 
 ## 1.0.0 (2026-10-31)
 

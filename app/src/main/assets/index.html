@@ -67,9 +67,11 @@
   --seam:        #050505;
   --rule:        #1a1a1c;
   --rule-strong: #34353a;
-  --text:        #e2dfd6;
-  --text-dim:    #8a877f;   /* was #4a4a48: labels were hard to read */
-  --text-mid:    #b4b1a8;
+  /* Two readable text levels: --text for main text, --text-mid for
+     everything secondary. --text-dim is only for placeholders and marks. */
+  --text:        #ebe8df;
+  --text-mid:    #c4c1b8;
+  --text-dim:    #9e9b92;
   --flap-ink:    #ece6d6;   /* characters on the flaps (user can change) */
   --flap-glow:   rgba(255, 176, 80, 0.42);   /* backlit glow behind them */
   --accent:      #b8a068;
@@ -216,8 +218,8 @@ body.show-cursor { cursor: default; }
   gap: 8px;
 }
 .sound-label {
-  font-size: 9px;
-  letter-spacing: 0.4em;
+  font-size: 11px;
+  letter-spacing: 0.24em;
   color: var(--danger-hover);
   text-transform: uppercase;
   white-space: nowrap;
@@ -273,7 +275,7 @@ body.show-cursor { cursor: default; }
   font-size: 10px;
   letter-spacing: 0.5em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--text-mid);
 }
 .local-city {
   font-family: var(--font-display);
@@ -368,7 +370,7 @@ body.no-glow .tile-char { text-shadow: none; }
 .row-info__icon { display: flex; width: calc(var(--tile-h, 48px) * 0.46); height: calc(var(--tile-h, 48px) * 0.46); color: #8f9bb8; }
 .row-info.is-day .row-info__icon { color: #f2b45a; filter: drop-shadow(0 0 calc(var(--tile-h, 48px) * 0.1) rgba(242, 180, 90, .45)); }
 .row-info__icon svg { width: 100%; height: 100%; }
-.home-row .row-info__offset { color: var(--text-dim); }
+.home-row .row-info__offset { color: var(--text-mid); }
 
 /* Row delete button */
 .row-delete {
@@ -575,7 +577,7 @@ body.show-cursor .row-drag { opacity: 0.9; }
 .picker-tz-name {
   font-size: 11px;
   letter-spacing: 0.16em;
-  color: var(--text-dim);
+  color: var(--text-mid);
   text-transform: uppercase;
 }
 .picker-item-time {
@@ -599,7 +601,7 @@ body.show-cursor .row-drag { opacity: 0.9; }
 .picker-item:hover .picker-add-icon { color: var(--text); border-color: var(--text-dim); }
 .picker-item.selected .picker-add-icon { color: #fff; background: var(--danger); border-color: var(--danger); }
 .picker-item.selected:not(.is-home):hover .picker-add-icon { background: transparent; color: var(--danger-hover); border-color: var(--danger-hover); }
-.picker-item.is-home .picker-add-icon { background: transparent; border-color: var(--rule-strong); color: var(--text-dim); font-size: 10px; letter-spacing: .1em; width: auto; padding: 0 10px; border-radius: 999px; }
+.picker-item.is-home .picker-add-icon { background: transparent; border-color: var(--rule-strong); color: var(--text-mid); font-size: 10px; letter-spacing: .1em; width: auto; padding: 0 10px; border-radius: 999px; }
 .picker-item.is-full .picker-add-icon { opacity: 0.4; }
 
 .picker-footer {
@@ -612,7 +614,7 @@ body.show-cursor .row-drag { opacity: 0.9; }
 .picker-count {
   font-size: 11px;
   letter-spacing: 0.16em;
-  color: var(--text-dim);
+  color: var(--text-mid);
   text-transform: uppercase;
 }
 .picker-count[hidden] { display: block; visibility: hidden; }
@@ -638,7 +640,7 @@ body.show-cursor .row-drag { opacity: 0.9; }
   padding: 30px 32px;
   font-size: 11px;
   letter-spacing: 0.25em;
-  color: var(--text-dim);
+  color: var(--text-mid);
   text-transform: uppercase;
 }
 
@@ -655,7 +657,7 @@ body.show-cursor .row-drag { opacity: 0.9; }
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
-  color: var(--text-dim);
+  color: var(--text-mid);
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 500;
@@ -698,7 +700,7 @@ body.show-cursor .row-drag { opacity: 0.9; }
   text-transform: uppercase;
   color: var(--text);
 }
-.pref-hint { margin: 0; font-size: 12px; letter-spacing: 0.02em; color: var(--text-dim); }
+.pref-hint { margin: 0; font-size: 12px; letter-spacing: 0.02em; color: var(--text-mid); }
 
 /* Colour swatches, with a custom picker as the last one */
 .swatches { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -764,6 +766,36 @@ body.show-cursor .row-drag { opacity: 0.9; }
 }
 .pref-reset:hover { color: var(--text); border-color: var(--text-dim); }
 
+/* Shortcuts list */
+.keys { margin: 0; display: grid; }
+.keys div {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 14px;
+  align-items: baseline;
+  padding: 10px 0;
+  border-top: 1px solid #1c1d20;
+  font-size: 13px;
+  color: var(--text-mid);
+}
+.keys div:first-child { border-top: 0; padding-top: 2px; }
+.keys dt { color: var(--text); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+.keys dd { margin: 0; }
+kbd {
+  display: inline-block;
+  min-width: 1.9em;
+  padding: 2px 7px;
+  border: 1px solid var(--rule-strong);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  background: #18191b;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-align: center;
+  text-transform: none;
+}
+
 /* Sound profiles */
 .sound-kits { display: flex; flex-direction: column; gap: 8px; }
 .kit-card {
@@ -795,7 +827,7 @@ body.show-cursor .row-drag { opacity: 0.9; }
   text-transform: uppercase;
   color: var(--text);
 }
-.kit-desc { font-size: 12px; color: var(--text-dim); }
+.kit-desc { font-size: 12px; color: var(--text-mid); }
 .kit-preview {
   margin-left: auto;
   flex-shrink: 0;
@@ -955,13 +987,44 @@ body.show-cursor .row-drag { opacity: 0.9; }
   .ctrl-btn { min-width: 40px; min-height: 40px; }
 }
 
-/* Credit line in Preferences */
+/* First-visit hint */
+.first-hint {
+  position: fixed;
+  left: 50%; bottom: 32px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 16px;
+  max-width: calc(100vw - 32px);
+  padding: 12px 22px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  background: rgba(14, 15, 16, 0.92);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  color: var(--text-mid);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 8px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  pointer-events: none;
+}
+.first-hint.visible { opacity: 1; transform: translate(-50%, 0); }
+.first-hint b { color: var(--text); font-weight: 500; }
+.first-hint__sep { width: 1px; height: 14px; background: var(--rule-strong); }
+@media (max-width: 700px) { .first-hint { border-radius: 16px; } .first-hint__sep { display: none; } }
+
+/* Credit line in Settings */
 .picker-credit {
   margin-top: 4px;
-  font-size: 10px;
-  letter-spacing: 0.18em;
+  font-size: 11px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--text-mid);
 }
 .picker-credit a { color: var(--text); text-decoration: none; }
 .picker-credit a:hover { color: var(--text); }
@@ -987,7 +1050,7 @@ body.show-cursor .row-drag { opacity: 0.9; }
 
   <!-- Bottom controls bar: settings + sound -->
   <div class="controls-bar" id="controlsBar">
-    <button class="ctrl-btn" id="settingsBtn" title="Configure cities" aria-label="Configure cities">
+    <button class="ctrl-btn" id="settingsBtn" title="Settings" aria-label="Settings">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
         <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.92c.04-.3.07-.62.07-.98 0-.36-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98 0 .33.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.58 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65z"/>
       </svg>
@@ -1014,20 +1077,29 @@ body.show-cursor .row-drag { opacity: 0.9; }
   </div>
 </div>
 
+<!-- First-visit hint: shown once, then never again -->
+<div class="first-hint" id="firstHint" role="status" aria-live="polite" hidden>
+  <span>Move the mouse or tap for <b>controls</b></span>
+  <span class="first-hint__sep" aria-hidden="true"></span>
+  <span><kbd>F</kbd> flips the board</span>
+  <span class="first-hint__sep" aria-hidden="true"></span>
+  <span><kbd>Shift</kbd> + <kbd>F</kbd> full screen</span>
+</div>
+
 <!-- ── CRT & FILM GRAIN OVERLAYS ── -->
 <div id="circadian-tint"   aria-hidden="true"></div>
 <div class="crt-scanlines" aria-hidden="true"></div>
 <div class="crt-grain"     aria-hidden="true"></div>
 <div class="crt-vignette"  aria-hidden="true"></div>
 
-<!-- City Picker + Theme Overlay -->
+<!-- Settings -->
 <div class="overlay" id="overlay">
-  <div class="picker" id="picker">
+  <div class="picker" id="picker" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
 
     <!-- Header: title + close -->
     <div class="picker-header">
       <div>
-        <div class="picker-title" id="pickerTitle">PREFERENCES</div>
+        <div class="picker-title" id="pickerTitle">SETTINGS</div>
         <div class="picker-credit">v1.0.0 · Created by <a href="https://shazmoghaddam.github.io" target="_blank" rel="noopener">Shaz Moghaddam</a>, London</div>
       </div>
       <button class="picker-close" id="pickerClose" title="Close" aria-label="Close">
@@ -1040,6 +1112,7 @@ body.show-cursor .row-drag { opacity: 0.9; }
       <button class="picker-tab active" id="tabCities"  data-tab="cities"  role="tab">Cities</button>
       <button class="picker-tab"        id="tabColours" data-tab="colours" role="tab">Colours</button>
       <button class="picker-tab"        id="tabSound"   data-tab="sound"   role="tab">Sound</button>
+      <button class="picker-tab"        id="tabKeys"    data-tab="keys"    role="tab">Shortcuts</button>
     </div>
 
     <!-- Panel: Cities -->
@@ -1063,7 +1136,7 @@ body.show-cursor .row-drag { opacity: 0.9; }
         <section class="pref-section">
           <div class="pref-head">
             <h3 class="pref-label">Accent</h3>
-            <p class="pref-hint">Buttons, highlights and this panel</p>
+            <p class="pref-hint">Buttons, highlights and these settings</p>
           </div>
           <div class="swatches" id="accentSwatches"></div>
         </section>
@@ -1084,9 +1157,35 @@ body.show-cursor .row-drag { opacity: 0.9; }
         <section class="pref-section">
           <div class="pref-head">
             <h3 class="pref-label">Flap sound</h3>
-            <p class="pref-hint">Press play to hear one. Previews play even when the clock is muted.</p>
+            <p class="pref-hint">Press play to hear a single flap. Previews play even when the clock is muted.</p>
           </div>
           <div class="sound-kits" id="soundKits" role="radiogroup" aria-label="Flap sound"></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Panel: Shortcuts -->
+    <div class="picker-panel" id="panelKeys">
+      <div class="pref-panel">
+        <section class="pref-section">
+          <div class="pref-head">
+            <h3 class="pref-label">Keyboard</h3>
+          </div>
+          <dl class="keys">
+            <div><dt><kbd>F</kbd></dt><dd>Flip the whole board</dd></div>
+            <div><dt><kbd>Shift</kbd> + <kbd>F</kbd></dt><dd>Full screen on or off</dd></div>
+            <div><dt><kbd>Esc</kbd></dt><dd>Close settings</dd></div>
+          </dl>
+        </section>
+        <section class="pref-section">
+          <div class="pref-head">
+            <h3 class="pref-label">Mouse and touch</h3>
+          </div>
+          <dl class="keys">
+            <div><dt>Move or tap</dt><dd>Show the controls; they hide again after a few seconds</dd></div>
+            <div><dt>Row handle <span aria-hidden="true">⠿</span></dt><dd>Drag a city up or down</dd></div>
+            <div><dt>Round cross</dt><dd>Take a city off the board</dd></div>
+          </dl>
         </section>
       </div>
     </div>
@@ -2008,7 +2107,7 @@ const buildReverbIR = (ctx, decay) => {
 const reverbCache = {};
 
 const playClick = (variant = 0, context = 'realtime', kitId = activeKitId, preview = false) => {
-  // Mute silences the board; a preview in Preferences always plays
+  // Mute silences the board; a preview in Settings always plays
   if (soundMuted && !preview) return;
   // Browsers only allow audio after a tap, click or key press
   if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return;
@@ -2168,12 +2267,11 @@ const saveSoundPrefs = () => {
 const PLAY_ICON = '<svg viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0l10 6-10 6z" fill="currentColor"/></svg>';
 
 const previewKit = (kitId, btn) => {
-  // A short run of flaps, like a word settling on the board
-  const delays = [0, 70, 140, 230, 300, 420];
-  delays.forEach((d, i) => setTimeout(() => playClick(i, 'realtime', kitId, true), d));
+  // One clean flap, so you hear exactly what that sound is like
+  playClick(0, 'realtime', kitId, true);
   if (btn) {
     btn.classList.add('playing');
-    setTimeout(() => btn.classList.remove('playing'), 520);
+    setTimeout(() => btn.classList.remove('playing'), 350);
   }
 };
 
@@ -2306,7 +2404,7 @@ const scheduleIdleFlips = () => {
 
    Two colours the viewer can pick, plus the backlit glow:
      ink    : the characters on the flaps (--flap-ink)
-     accent : controls, highlights and Preferences
+     accent : controls, highlights and Settings
               (--danger for borders, --danger-hover for text)
    Each has preset swatches and a custom colour picker.
    Saved as one object; older saves of the accent theme
@@ -2356,7 +2454,7 @@ const applyColours = () => {
   const [r, g, b] = colours.ink === DEFAULT_COLOURS.ink ? [255, 176, 80] : hexToRgb(colours.ink);
   root.style.setProperty('--flap-glow', `rgba(${r},${g},${b},0.42)`);
   root.style.setProperty('--danger-hover', colours.accent);
-  root.style.setProperty('--danger', shade(colours.accent, 0.62));
+  root.style.setProperty('--danger', shade(colours.accent, 0.78));
   document.body.classList.toggle('no-glow', !colours.glow);
 };
 
@@ -2863,6 +2961,32 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+/* ── First-visit hint: shows once, about 10 seconds, or until you interact ── */
+const HINT_KEY = 'terminaltime_hint_seen_v1';
+const showFirstHint = () => {
+  let seen = false;
+  try { seen = localStorage.getItem(HINT_KEY) === '1'; } catch (e) { seen = true; }
+  if (seen) return;
+  try { localStorage.setItem(HINT_KEY, '1'); } catch (e) {}
+  const hint = document.getElementById('firstHint');
+  hint.hidden = false;
+  let gone = false;
+  const hide = () => {
+    if (gone) return;
+    gone = true;
+    hint.classList.remove('visible');
+    setTimeout(() => { hint.hidden = true; }, 700);
+  };
+  setTimeout(() => {
+    requestAnimationFrame(() => hint.classList.add('visible'));
+    setTimeout(hide, 10000);
+    // Any key, click or tap dismisses it (after a moment, so it can be read)
+    setTimeout(() => {
+      ['keydown', 'pointerdown'].forEach(t => document.addEventListener(t, hide, { once: true }));
+    }, 1200);
+  }, 2600);   // after the intro fade
+};
+
 document.addEventListener('mousemove', showCursor);
 document.addEventListener('pointerdown', showCursor);
 
@@ -2925,14 +3049,14 @@ const setLocalHeader = () => {
 ───────────────────────────────────────────────────── */
 const CIRCADIAN_KEYFRAMES = [
   // { h: fractional hour, tint:[r,g,b], opacity, brightness }
-  { h:  0, tint: [255, 120,  30], opacity: 0.26, brightness: 0.68 }, // deep night
-  { h:  5, tint: [255, 140,  50], opacity: 0.18, brightness: 0.74 }, // pre-dawn
-  { h:  7, tint: [255, 190, 100], opacity: 0.07, brightness: 0.88 }, // dawn
+  { h:  0, tint: [255, 120,  30], opacity: 0.26, brightness: 0.84 }, // deep night
+  { h:  5, tint: [255, 140,  50], opacity: 0.18, brightness: 0.88 }, // pre-dawn
+  { h:  7, tint: [255, 190, 100], opacity: 0.07, brightness: 0.94 }, // dawn
   { h: 10, tint: [210, 225, 255], opacity: 0.02, brightness: 0.97 }, // morning
   { h: 14, tint: [200, 220, 255], opacity: 0.00, brightness: 1.00 }, // midday (neutral)
   { h: 18, tint: [255, 180,  60], opacity: 0.06, brightness: 0.92 }, // dusk
-  { h: 21, tint: [255, 140,  35], opacity: 0.18, brightness: 0.78 }, // evening
-  { h: 24, tint: [255, 120,  30], opacity: 0.26, brightness: 0.68 }, // midnight (= 0)
+  { h: 21, tint: [255, 140,  35], opacity: 0.18, brightness: 0.9 },  // evening
+  { h: 24, tint: [255, 120,  30], opacity: 0.26, brightness: 0.84 }, // midnight (= 0)
 ];
 
 const ctLerp  = (a, b, t) => a + (b - a) * t;
@@ -3014,6 +3138,7 @@ const init = () => {
   startUpdating();
   scheduleIdleFlips();
   requestWakeLock();
+  showFirstHint();
 };
 
 window.addEventListener('DOMContentLoaded', init);
