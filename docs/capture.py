@@ -59,7 +59,7 @@ async def main():
               clearInterval(updateInterval);  // hold the frame so the header text stays
               document.getElementById('localCity').textContent = 'SPLIT-FLAP WORLD CLOCK';
               document.getElementById('localDate').textContent =
-                'Open source · Android · Shaz Moghaddam, London';
+                'Open source · Any browser · Shaz Moghaddam, London';
             }"""
         )
         await page.wait_for_timeout(300)

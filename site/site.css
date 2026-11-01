@@ -5,16 +5,17 @@
 @font-face { font-family: 'IBM Plex Mono'; src: url('fonts/IBMPlexMono-500.woff2') format('woff2'); font-weight: 500 600; font-display: swap; }
 
 :root {
-  --ground: #080808;
-  --panel: #111214;
+  /* Light paper page; the clock itself (preview, logo, step tiles) stays dark */
+  --ground: #F3F1EB;
+  --panel: #FFFFFF;
   --tile: #1a1b1c;
-  --tile-top: #232426;
-  --line: #222326;
-  --ink: #e9e6dd;
-  --ink-2: #b9b6ad;
-  --ink-3: #85837c;
-  --accent: #e05050;
-  --accent-soft: rgba(224, 80, 80, 0.14);
+  --tile-top: #2a2b2e;
+  --tile-ink: #e9e6dd;
+  --line: #DEDAD0;
+  --ink: #15161A;
+  --ink-2: #44454B;
+  --ink-3: #6E6F75;
+  --accent: #C25A37;   /* a deeper shade of the footer terracotta, readable on the light page */
 
   --f-display: 'Bebas Neue', 'Arial Narrow', sans-serif;
   --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
@@ -22,7 +23,7 @@
 
   --maxw: 1180px;
   --gutter: 16px;
-  color-scheme: dark;
+  color-scheme: light;
 }
 @media (min-width: 720px) { :root { --gutter: 32px; } }
 
@@ -46,7 +47,7 @@ kbd {
   border: 1px solid var(--line);
   border-bottom-width: 2px;
   border-radius: 4px;
-  background: var(--tile);
+  background: var(--panel);
   color: var(--ink);
   font: 500 .82em/1.6 var(--f-mono);
   text-align: center;
@@ -62,23 +63,24 @@ kbd {
 /* ---- Bar ---- */
 .bar {
   position: sticky; top: 0; z-index: 20;
-  background: rgba(8, 8, 8, .82);
+  background: rgba(243, 241, 235, .86);
   -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--line);
 }
 .bar__in { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 60px; }
 .mark { white-space: nowrap; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font: 22px/1 var(--f-display); letter-spacing: .06em; padding-top: 3px; }
 .mark__glyph { width: 28px; height: 28px; flex: none; margin-top: -3px; }
-.mark__tile { fill: var(--tile); stroke: #34363a; stroke-width: 1; }
+.mark__tile { fill: var(--tile); }
 .mark__top { fill: var(--tile-top); }
-.mark__seam { stroke: var(--ground); stroke-width: 1.6; }
+.mark__seam { stroke: var(--ground); stroke-width: 1.8; }
 .mark__accent { fill: var(--accent); }
 
-.nav { display: flex; align-items: center; gap: 4px; }
+.nav { display: flex; align-items: center; gap: 8px; }
 .nav a {
-  padding: 8px 12px;
-  border: 1px solid transparent;
-  border-radius: 6px;
+  padding: 9px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
   color: var(--ink-2);
   font: 500 12px/1 var(--f-mono);
   letter-spacing: .1em;
@@ -87,15 +89,13 @@ kbd {
   white-space: nowrap;
   transition: color .2s, border-color .2s, background-color .2s;
 }
-.nav a:hover { color: var(--ink); border-color: var(--line); }
-.nav .nav__open { color: var(--accent); border-color: rgba(224, 80, 80, .45); }
-.nav .nav__open:hover { color: #fff; background: var(--accent); border-color: var(--accent); }
+.nav a:hover { color: var(--panel); background: var(--ink); border-color: var(--ink); }
 @media (max-width: 760px) {
   .nav a:not(.nav__open) { display: none; }
 }
 @media (max-width: 480px) {
   .mark { font-size: 18px; gap: 8px; }
-  .nav a { padding: 8px 10px; font-size: 11px; }
+  .nav a { padding: 8px 12px; font-size: 11px; }
 }
 @media (max-width: 340px) {
   .mark span { display: none; }
@@ -120,8 +120,8 @@ kbd {
   border-radius: 14px;
   padding: 10px;
   background: linear-gradient(#18191b, #0e0f10);
-  border: 1px solid var(--line);
-  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .9), 0 0 0 1px rgba(255, 255, 255, .02) inset;
+  border: 1px solid #2a2b2e;
+  box-shadow: 0 40px 70px -36px rgba(20, 18, 12, .55), 0 0 0 1px rgba(255, 255, 255, .03) inset;
   text-decoration: none;
 }
 .preview__screen {
@@ -141,10 +141,10 @@ kbd {
 }
 .preview__cta {
   position: absolute; right: 26px; bottom: 26px;
-  padding: 10px 16px;
-  border-radius: 6px;
-  background: var(--accent);
-  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--ink);
   font: 500 12px/1 var(--f-mono);
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -187,7 +187,7 @@ h3 { color: var(--ink); font: 26px/1 var(--f-display); letter-spacing: .05em; fo
   display: grid; place-items: center;
   border-radius: 4px;
   background: linear-gradient(var(--tile-top) 50%, var(--tile) 50%);
-  color: var(--ink);
+  color: var(--tile-ink);
   font: 500 16px/1 var(--f-mono);
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .4);
 }
@@ -200,19 +200,19 @@ h3 { color: var(--ink); font: 26px/1 var(--f-display); letter-spacing: .05em; fo
 .keys dt { color: var(--ink); font: 500 13px/1.6 var(--f-mono); }
 .keys__tip { margin-top: 16px; font-size: 14px; color: var(--ink-3); }
 
-/* ---- Footer: a departure-board yellow and a signal blue, split on the diagonal ---- */
+/* ---- Footer: terracotta and slate navy, split on the diagonal ---- */
 .foot {
-  --sun: #FFD23F; --night: #2F6FDB;
+  --sun: #D9734E; --night: #24324A;
   position: relative; isolation: isolate; overflow: hidden;
   background: linear-gradient(to bottom right, var(--sun) 50%, var(--night) 50%);
 }
 .foot__layer {
-  --f-ink: #FFFFFF; --f-ink-2: rgba(255, 255, 255, .92); --f-ink-3: rgba(255, 255, 255, .82); --f-line: rgba(255, 255, 255, .3);
+  --f-ink: #FFFFFF; --f-ink-2: rgba(255, 255, 255, .92); --f-ink-3: rgba(255, 255, 255, .78); --f-line: rgba(255, 255, 255, .28);
   color: var(--f-ink-2);
   clip-path: polygon(100% 0, 100% 100%, 0 100%);
 }
 .foot__layer--sun {
-  --f-ink: #1D1A0B; --f-ink-2: rgba(29, 26, 11, .9); --f-ink-3: rgba(29, 26, 11, .8); --f-line: rgba(29, 26, 11, .24);
+  --f-ink: #2B120A; --f-ink-2: rgba(43, 18, 10, .9); --f-ink-3: rgba(43, 18, 10, .78); --f-line: rgba(43, 18, 10, .24);
   position: absolute; inset: 0;
   clip-path: polygon(0 0, 100% 0, 0 100%);
 }
