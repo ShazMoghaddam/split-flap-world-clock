@@ -60,7 +60,7 @@ Everything is saved in your browser. Browsers only allow sound after you've clic
 ## As a desk display
 
 - **Laptop or spare monitor:** open the clock, press <kbd>Shift</kbd> + <kbd>F</kbd>, and leave it running.
-- **iPad or iPhone:** in Safari, use Share, then Add to Home Screen, and open it from there for a full-screen clock. Turn the device sideways; the board is made for landscape.
+- **iPad or iPhone:** in Safari, use Share, then Add to Home Screen, and open it from there for a full-screen clock. An iPad works either way up. A phone needs to be sideways, and the clock asks you to turn it if it's upright.
 - **Offline:** save [`index.html`](app/src/main/assets/index.html) anywhere and open it. It needs no internet connection.
 
 ## Run it yourself

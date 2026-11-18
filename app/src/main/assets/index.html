@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#080808">
 <meta name="description" content="Split-Flap World Clock: an atmospheric split-flap departure board for world time">
 <meta name="author" content="Shaz Moghaddam, London">
@@ -110,9 +110,12 @@ body {
    STAGE & BOARD — true fullscreen
 ───────────────────────────────────────────────────── */
 .stage {
-  width: 100vw;
+  /* dvh is the height you can actually see. On iPhone and iPad, 100vh is
+     taller than that (it ignores Safari's toolbars), which pushed the bottom
+     of the board and the controls out of reach. vh stays as the fallback. */
+  width: 100%;
   height: 100vh;
-  min-height: 100vh;
+  height: 100dvh;
   padding: 0;
   animation: introFade 3s ease-out forwards;
   opacity: 0;
@@ -129,6 +132,11 @@ body {
 .board {
   background: var(--board);
   padding: 5vh 5vw 10vh 5vw;
+  padding:
+    max(5dvh, env(safe-area-inset-top, 0px))
+    max(5vw, env(safe-area-inset-right, 0px))
+    max(10dvh, env(safe-area-inset-bottom, 0px))
+    max(5vw, env(safe-area-inset-left, 0px));
   border: none;
   flex: 1;
   display: flex;
@@ -140,8 +148,11 @@ body {
    BOTTOM CONTROLS BAR (settings + sound)
 ───────────────────────────────────────────────────── */
 .controls-bar {
-  position: absolute;
-  bottom: 28px; right: 28px;
+  /* Fixed, so it stays on the visible screen and clear of the home bar */
+  position: fixed;
+  bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 12px));
+  right: max(28px, calc(env(safe-area-inset-right, 0px) + 12px));
+  max-width: calc(100% - 32px);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -974,10 +985,20 @@ kbd {
 ───────────────────────────────────────────────────── */
 /* Phones in landscape: tighter margins so every row fits */
 @media (max-height: 520px) {
-  .board  { padding: 4vh 4vw 12vh 4vw; }
+  .board  {
+    padding: 4vh 4vw 12vh 4vw;
+    padding:
+      max(4dvh, env(safe-area-inset-top, 0px))
+      max(4vw, env(safe-area-inset-right, 0px))
+      max(12dvh, env(safe-area-inset-bottom, 0px))
+      max(4vw, env(safe-area-inset-left, 0px));
+  }
   .header { padding-bottom: 2vh; margin-bottom: 2.5vh; }
   .local-date { margin-top: 4px; }
-  .controls-bar { bottom: 12px; right: 16px; }
+  .controls-bar {
+    bottom: max(12px, calc(env(safe-area-inset-bottom, 0px) + 8px));
+    right: max(16px, calc(env(safe-area-inset-right, 0px) + 8px));
+  }
   .picker { height: 94vh; }
   .picker-header { padding: 10px 20px 8px; }
   .picker-title { font-size: 20px; }
@@ -991,6 +1012,44 @@ kbd {
   .picker-tabs { padding: 0 20px; }
   .kit-card { padding: 8px 12px; }
   .swatch { width: 30px; height: 30px; }
+}
+
+/* Narrow screens: a slimmer bar, so it fits inside the screen */
+@media (max-width: 640px) {
+  .controls-bar { gap: 6px; }
+  .sound-label { display: none; }
+  .sound-vol { width: 64px; }
+}
+
+/* Phones held upright: 33 tiles per row can't be read at that width,
+   so the board waits behind a "turn your phone" card. Tablets and
+   anything wider than 700px are unaffected. */
+.rotate-hint { display: none; }
+@media (orientation: portrait) and (max-width: 700px) {
+  .rotate-hint {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 32px max(32px, env(safe-area-inset-right, 0px)) 32px max(32px, env(safe-area-inset-left, 0px));
+    background: var(--bg);
+    color: var(--text-mid);
+    text-align: center;
+    cursor: default;
+  }
+  .stage, .first-hint { visibility: hidden; }
+}
+.rotate-hint__icon { width: 64px; height: 64px; color: var(--accent); animation: rotateNudge 2.4s ease-in-out infinite; }
+.rotate-hint__title { font-family: var(--font-display); font-size: 34px; letter-spacing: 0.06em; color: var(--text); }
+.rotate-hint__text { max-width: 28ch; font-size: 12px; line-height: 1.7; letter-spacing: 0.08em; text-transform: uppercase; }
+@keyframes rotateNudge {
+  0%, 30%   { transform: rotate(0deg); }
+  55%, 85%  { transform: rotate(-90deg); }
+  100%      { transform: rotate(0deg); }
 }
 
 /* Touch screens: bar buttons big enough to tap */
@@ -1043,6 +1102,7 @@ kbd {
 @media (prefers-reduced-motion: reduce) {
   .stage { animation: none; opacity: 1; }
   .crt-grain::before { animation: none !important; }
+  .rotate-hint__icon { animation: none; }
 }
 </style>
 </head>
@@ -1086,6 +1146,16 @@ kbd {
       <span class="sound-vol-val" id="volVal">5</span>
     </div>
   </div>
+</div>
+
+<!-- Phones held upright: ask for landscape (shown by CSS only) -->
+<div class="rotate-hint" role="status">
+  <svg class="rotate-hint__icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <rect x="20" y="8" width="24" height="48" rx="4"/>
+    <path d="M29 50h6"/>
+  </svg>
+  <p class="rotate-hint__title">Turn your phone sideways</p>
+  <p class="rotate-hint__text">The board needs a wide screen. Rotate to landscape to see every city.</p>
 </div>
 
 <!-- First-visit hint: shown once, then never again -->
@@ -2867,6 +2937,8 @@ const HINT_KEY = 'terminaltime_hint_seen_v1';
 const showFirstHint = () => {
   // Not inside the site's live preview: save the hint for the real clock
   if (window.self !== window.top) return;
+  // Not behind the "turn your phone" card either: keep it for landscape
+  if (window.matchMedia('(orientation: portrait) and (max-width: 700px)').matches) return;
   let seen = false;
   try { seen = localStorage.getItem(HINT_KEY) === '1'; } catch (e) { seen = true; }
   if (seen) return;
