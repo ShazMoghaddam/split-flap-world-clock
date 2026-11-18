@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.1 (2026-11-18)
+
+Fixes for iPad and phones. Nothing changes on a laptop or desktop screen.
+
+### Fixed
+- **iPad and iPhone:** the board no longer runs off the bottom of the screen. Safari counted the screen as taller than it is, so the lower rows and the controls ended up under its toolbar with no way to scroll to them. The clock now sizes itself to the area you can actually see.
+- **Settings on small screens:** the controls bar stays on the screen. On a phone it was wider than the screen, and the Settings button sat off the left edge. On narrow screens the bar is now slimmer, with a shorter volume slider.
+- **Notch and home bar:** the board and the controls keep clear of them, including when the clock runs from the Home Screen.
+
+### Added
+- **Turn your phone sideways:** on a phone held upright, a short card asks you to rotate it, because a full row of flaps can't be read at that width. The first-visit hint waits for landscape rather than being used up behind the card.
+
 ## 1.0.0 (2026-11-01)
 
 First release as a web clock, with its own site.
