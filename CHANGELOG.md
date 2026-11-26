@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2 (2026-11-26)
+
+### Fixed
+- **Stays awake for longer runs.** The clock kept the screen awake when it opened, but if the browser or the computer let go of that (after sleep or on low battery), it only asked again after you switched tabs and back, so the screensaver could take over. It now asks again within 20 seconds, and on any tap.
+
 ## 1.0.1 (2026-11-18)
 
 Fixes for iPad and phones. Nothing changes on a laptop or desktop screen.
