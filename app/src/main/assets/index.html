@@ -2984,16 +2984,27 @@ if (canFullscreen) {
   fullscreenBtn.previousElementSibling.hidden = true; // its divider
 }
 
-/* ── Keep the screen awake while the clock is showing ── */
+/* ── Keep the screen awake while the clock is showing ──
+   The browser lets go when the tab is hidden, and the system can drop
+   the lock on its own (after sleep, on low battery), so ask again on
+   return, on a tap and every 20 seconds. */
 let wakeLock = null;
+let askingForWake = false;
 const requestWakeLock = async () => {
-  if (!('wakeLock' in navigator) || document.visibilityState !== 'visible') return;
-  try { wakeLock = await navigator.wakeLock.request('screen'); } catch (e) { wakeLock = null; }
+  if (wakeLock || askingForWake || !('wakeLock' in navigator)) return;
+  if (document.visibilityState !== 'visible') return;
+  askingForWake = true;
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+    wakeLock.addEventListener('release', () => { wakeLock = null; });
+  } catch (e) {
+    wakeLock = null;
+  }
+  askingForWake = false;
 };
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') requestWakeLock();
-});
-document.addEventListener('pointerdown', requestWakeLock, { once: true });
+document.addEventListener('visibilitychange', requestWakeLock);
+document.addEventListener('pointerdown', requestWakeLock);
+setInterval(requestWakeLock, 20000);
 
 /* ─────────────────────────────────────────────────────
    LOCAL CITY HEADER
